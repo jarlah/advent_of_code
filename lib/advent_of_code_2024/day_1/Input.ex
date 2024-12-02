@@ -1,12 +1,9 @@
 defmodule AdventOfCode2024.Day1.Input do
   def parsed_input do
     input()
-    |> then(fn text ->
-      text
-      |> String.split("\n")
-      |> Enum.map(&String.trim/1)
-      |> Enum.reject(&(&1 == ""))
-    end)
+    |> String.split("\n")
+    |> Enum.map(&String.trim/1)
+    |> Enum.reject(&(&1 == ""))
     |> Enum.map(fn line ->
       line
       |> String.split(~r"\s+")

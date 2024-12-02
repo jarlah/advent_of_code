@@ -1,4 +1,5 @@
 defmodule AdventOfCode2024.Day2.Input do
+
   def parsed_input do
     input()
     |> String.split("\n")
@@ -7,15 +8,8 @@ defmodule AdventOfCode2024.Day2.Input do
     |> Enum.map(fn line ->
       line
       |> String.split(~r/\s+/)
-      |> Enum.map(&string_to_integer/1)
+      |> Enum.map(&String.to_integer/1)
     end)
-  end
-
-  defp string_to_integer(value) do
-    case Integer.parse(value) do
-      {number, ""} -> number
-      _ -> raise ArgumentError, "Invalid value found: #{inspect(value)}"
-    end
   end
 
   def input do
