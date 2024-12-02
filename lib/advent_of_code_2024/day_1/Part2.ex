@@ -1,8 +1,8 @@
 defmodule AdventOfCode2024.Day2.Solution do
-  alias AdventOfCode2024.Utils.FileUtils
+  alias AdventOfCode2024.Day1.Input
 
   def solution do
-    with [list1, list2] <- FileUtils.read_numbers() do
+    with [list1, list2] <- Input.parsed_input() do
       list1
       |> Enum.map(fn number ->
         number *
