@@ -23,14 +23,8 @@ defmodule AdventOfCode2024.Day2.Part2.Solution do
   defp validate_report(report), do: {:unsafe, report}
 
   defp is_acceptable_report(report) do
-    cond do
-      level_validator(report, fn diff -> diff >= 1 and diff <= 3 end) or
-          level_validator(report, fn diff -> diff <= -1 and diff >= -3 end) ->
-        true
-
-      true ->
-        false
-    end
+    level_validator(report, fn diff -> diff >= 1 and diff <= 3 end) ||
+      level_validator(report, fn diff -> diff <= -1 and diff >= -3 end)
   end
 
   defp level_validator(report, valid) do
