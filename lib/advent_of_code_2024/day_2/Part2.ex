@@ -6,17 +6,21 @@ defmodule AdventOfCode2024.Day2.Part2.Solution do
     |> Enum.map(&validate_report/1)
     |> Enum.count(fn
       {:safe, _} -> true
-      _ -> false
+      {:unsafe, report} -> dampen(report)
     end)
   end
 
   defp validate_report(report) when is_list(report) do
-    recursive_validate_report(report)
+    cond do
+      is_acceptable_level(report) ->
+        {:safe, report}
+
+      true ->
+        {:unsafe, report}
+    end
   end
 
-  defp recursive_validate_report(report, _index \\ 0) do
-    is_acceptable_level(report)
-  end
+  defp validate_report(report), do: {:unsafe, report}
 
   defp is_acceptable_level(report) do
     cond do
@@ -43,4 +47,18 @@ defmodule AdventOfCode2024.Day2.Part2.Solution do
     end)
     |> length() == length(report)
   end
+
+  defp dampen(report, index \\ 0)
+
+  defp dampen(report, index) when length(report) > index do
+    valid =
+      report
+      |> List.delete_at(index)
+      |> is_acceptable_level()
+
+    valid ||
+      dampen(report, index + 1)
+  end
+
+  defp dampen(_, _), do: false
 end
