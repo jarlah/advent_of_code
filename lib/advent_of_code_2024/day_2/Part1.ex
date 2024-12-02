@@ -12,10 +12,7 @@ defmodule AdventOfCode2024.Day2.Part1.Solution do
 
   defp validate_report(report) when is_list(report) do
     cond do
-      is_valid_level(report, fn diff -> diff >= 1 and diff <= 3 end) ->
-        {:safe, report}
-
-      is_valid_level(report, fn diff -> diff <= -1 and diff >= -3 end) ->
+      is_acceptable_level(report) ->
         {:safe, report}
 
       true ->
@@ -25,7 +22,18 @@ defmodule AdventOfCode2024.Day2.Part1.Solution do
 
   defp validate_report(report), do: {:unsafe, report}
 
-  defp is_valid_level(report, valid) do
+  defp is_acceptable_level(report) do
+    cond do
+      level_validator(report, fn diff -> diff >= 1 and diff <= 3 end) or
+          level_validator(report, fn diff -> diff <= -1 and diff >= -3 end) ->
+        true
+
+      true ->
+        false
+    end
+  end
+
+  defp level_validator(report, valid) do
     report
     |> Stream.with_index()
     |> Enum.take_while(fn {level, index} ->
