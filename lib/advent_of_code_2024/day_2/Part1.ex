@@ -10,31 +10,33 @@ defmodule AdventOfCode2024.Day2.Part1.Solution do
     end)
   end
 
-  defp validate_report(level) when is_list(level) do
+  defp validate_report(report) when is_list(report) do
     cond do
-      is_valid_level(level, fn (diff) -> diff >= 1 and diff <= 3 end) ->
-        {:safe, level}
-      is_valid_level(level, fn (diff) -> diff <= -1 and diff >= -3 end) ->
-        {:safe, level}
+      is_valid_level(report, fn diff -> diff >= 1 and diff <= 3 end) ->
+        {:safe, report}
+
+      is_valid_level(report, fn diff -> diff <= -1 and diff >= -3 end) ->
+        {:safe, report}
+
       true ->
-        {:unsafe, level}
+        {:unsafe, report}
     end
   end
 
-  defp validate_report(level), do: {:unsafe, level}
+  defp validate_report(report), do: {:unsafe, report}
 
-  defp is_valid_level(level, valid) do
-    level
+  defp is_valid_level(report, valid) do
+    report
     |> Stream.with_index()
-    |> Enum.take_while(fn {item, index} ->
-      next_item = Enum.at(level, index + 1)
+    |> Enum.take_while(fn {level, index} ->
+      next_level = Enum.at(report, index + 1)
 
-      if next_item do
-        valid.(item - next_item)
+      if next_level do
+        valid.(level - next_level)
       else
         true
       end
     end)
-    |> length() == length(level)
+    |> length() == length(report)
   end
 end

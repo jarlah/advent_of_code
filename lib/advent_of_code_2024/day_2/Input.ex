@@ -1,5 +1,4 @@
 defmodule AdventOfCode2024.Day2.Input do
-
   def parsed_input do
     input()
     |> String.split("\n")
