@@ -12,7 +12,7 @@ defmodule AdventOfCode2024.Day2.Part2.Solution do
 
   defp validate_report(report) when is_list(report) do
     cond do
-      is_acceptable_level(report) ->
+      is_acceptable_report(report) ->
         {:safe, report}
 
       true ->
@@ -22,7 +22,7 @@ defmodule AdventOfCode2024.Day2.Part2.Solution do
 
   defp validate_report(report), do: {:unsafe, report}
 
-  defp is_acceptable_level(report) do
+  defp is_acceptable_report(report) do
     cond do
       level_validator(report, fn diff -> diff >= 1 and diff <= 3 end) or
           level_validator(report, fn diff -> diff <= -1 and diff >= -3 end) ->
@@ -54,7 +54,7 @@ defmodule AdventOfCode2024.Day2.Part2.Solution do
     valid =
       report
       |> List.delete_at(index)
-      |> is_acceptable_level()
+      |> is_acceptable_report()
 
     valid ||
       dampen(report, index + 1)
