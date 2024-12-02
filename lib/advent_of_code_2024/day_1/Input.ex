@@ -1,6 +1,6 @@
 defmodule AdventOfCode2024.Day1.Input do
   def parsed_input do
-    AdventOfCode2024.Day1.Input.input()
+    input()
     |> then(fn text ->
       text
       |> String.split("\n")

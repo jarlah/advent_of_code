@@ -1,8 +1,8 @@
-defmodule AdventOfCode2024.Day2.Solution do
-  alias AdventOfCode2024.Day1.Input
+defmodule AdventOfCode2024.Day1.Part2.Solution do
+  import AdventOfCode2024.Day1.Input, only: [parsed_input: 0]
 
   def solution do
-    with [list1, list2] <- Input.parsed_input() do
+    with [list1, list2] <- parsed_input() do
       list1
       |> Enum.map(fn number ->
         number *
