@@ -25,6 +25,7 @@ defmodule AdventOfCode2024.Day3.Part2.Solution do
             {:enabled, "#{str}#{<<char>>}", sum}
         end
     end)
+    |> then(&(Tuple.to_list(&1) |> List.last()))
   end
 
   defp get_int_at(str, i) do
