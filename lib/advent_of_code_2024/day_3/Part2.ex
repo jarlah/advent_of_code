@@ -1,6 +1,8 @@
 defmodule AdventOfCode2024.Day3.Part2.Solution do
   import AdventOfCode2024.Day3.Input
 
+  @multiply_regex ~r/mul\((\d{1,3}),(\d{1,3})\)$/
+
   def solution do
     input()
     |> String.to_charlist()
@@ -16,8 +18,8 @@ defmodule AdventOfCode2024.Day3.Part2.Solution do
     cond do
       String.ends_with?(str, "don't()") ->
         {:disabled, str <> <<char>>, sum}
-      String.match?(str, ~r/mul\(\d{1,3},\d{1,3}\)$/) ->
-        [_, a, b] = Regex.run(~r/mul\((\d{1,3}),(\d{1,3})\)$/, str)
+      String.match?(str, @multiply_regex) ->
+        [_, a, b] = Regex.run(@multiply_regex, str)
         {:enabled, <<char>>, sum + String.to_integer(a) * String.to_integer(b)}
       true ->
         {:enabled, str <> <<char>>, sum}
