@@ -1,4 +1,11 @@
 defmodule AdventOfCode2024.Day1.Part2.Solution do
+  @doc ~S"""
+  ## Examples
+
+      iex> AdventOfCode2024.Day1.Part2.Solution.solution(AdventOfCode2024.Day1.Input.test_input())
+      31
+
+  """
   def solution(parsed_input) do
     with [list1, list2] <- parsed_input do
       list1

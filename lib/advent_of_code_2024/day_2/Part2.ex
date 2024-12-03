@@ -1,4 +1,11 @@
 defmodule AdventOfCode2024.Day2.Part2.Solution do
+  @doc ~S"""
+  ## Examples
+
+      iex> AdventOfCode2024.Day2.Part2.Solution.solution(AdventOfCode2024.Day2.Input.test_input())
+      4
+
+  """
   def solution(parsed_input) do
     parsed_input
     |> Enum.map(&validate_report/1)

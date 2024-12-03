@@ -1,6 +1,13 @@
 defmodule AdventOfCode2024.Day3.Part2.Solution do
   @multiply_regex ~r/mul\((\d{1,3}),(\d{1,3})\)$/
 
+  @doc ~S"""
+  ## Examples
+
+      iex> AdventOfCode2024.Day3.Part2.Solution.solution(AdventOfCode2024.Day3.Input.test_input_dodont())
+      48
+
+  """
   def solution(input) do
     input
     |> String.to_charlist()
