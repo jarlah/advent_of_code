@@ -35,7 +35,7 @@ defmodule AdventOfCode2024.Day1.Input do
 
   ## Examples
 
-      iex> [ "80784   47731", "81682   36089" | tail] = AdventOfCode2024.Day1.Input.input_lines()
+      iex> [ "80784   47731", "81682   36089" | _tail] = AdventOfCode2024.Day1.Input.input_lines()
 
   """
   def input_lines do
