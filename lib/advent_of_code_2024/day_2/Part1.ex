@@ -1,8 +1,7 @@
 defmodule AdventOfCode2024.Day2.Part1.Solution do
-  import AdventOfCode2024.Day2.Input, only: [parsed_input: 0]
 
-  def solution do
-    parsed_input()
+  def solution(parsed_input) do
+    parsed_input
     |> Enum.map(&validate_report/1)
     |> Enum.count(fn
       {:safe, _} -> true

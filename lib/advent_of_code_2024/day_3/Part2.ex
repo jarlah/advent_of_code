@@ -1,10 +1,9 @@
 defmodule AdventOfCode2024.Day3.Part2.Solution do
-  import AdventOfCode2024.Day3.Input
 
   @multiply_regex ~r/mul\((\d{1,3}),(\d{1,3})\)$/
 
-  def solution do
-    input()
+  def solution(input) do
+    input
     |> String.to_charlist()
     |> List.foldl({:enabled, "", 0}, &process_char/2)
     |> then(&(Tuple.to_list(&1) |> List.last()))
