@@ -1,8 +1,8 @@
-defmodule AdventOfCode2024.Day2.Part2.Solution do
+defmodule AOC2024.Day2.Part2.Solution do
   @doc ~S"""
   ## Examples
 
-      iex> AdventOfCode2024.Day2.Part2.Solution.solution(AdventOfCode2024.Day2.Input.test_input())
+      iex> AOC2024.Day2.Part2.Solution.solution(AOC2024.Day2.Input.test_input())
       4
 
   """

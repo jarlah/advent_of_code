@@ -6,7 +6,7 @@ defmodule AdventOfCodeTest do
   modules = ["Input", "Part1.Solution", "Part2.Solution"]
 
   for year <- years, day <- days, module <- modules do
-    doctest_module = :"Elixir.AdventOfCode#{year}.Day#{day}.#{module}"
+    doctest_module = :"Elixir.AOC#{year}.Day#{day}.#{module}"
 
     if Code.ensure_loaded?(doctest_module) do
       doctest doctest_module

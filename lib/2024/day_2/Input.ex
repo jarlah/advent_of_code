@@ -1,4 +1,4 @@
-defmodule AdventOfCode2024.Day2.Input do
+defmodule AOC2024.Day2.Input do
   def parsed_input do
     File.open!(Path.join(__DIR__, "input.txt"), [:read, :utf8])
     |> IO.stream(:line)

@@ -1,9 +1,9 @@
-defmodule AOC2024.Day4.Input do
+defmodule AOC2024.Day6.Input do
 
   @doc ~S"""
   ## Examples
 
-      iex> AOC2024.Day4.Input.input()
+      iex> AOC2024.Day6.Input.input()
       "TBD"
 
   """
