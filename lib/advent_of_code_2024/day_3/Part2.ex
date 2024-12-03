@@ -11,16 +11,20 @@ defmodule AdventOfCode2024.Day3.Part2.Solution do
   end
 
   defp process_char(char, {:disabled, str, sum}) do
-    if String.ends_with?(str, "do()"), do: {:enabled, <<char>>, sum}, else: {:disabled, str <> <<char>>, sum}
+    if String.ends_with?(str, "do()"),
+      do: {:enabled, <<char>>, sum},
+      else: {:disabled, str <> <<char>>, sum}
   end
 
   defp process_char(char, {:enabled, str, sum}) do
     cond do
       String.ends_with?(str, "don't()") ->
         {:disabled, str <> <<char>>, sum}
+
       String.match?(str, @multiply_regex) ->
         [_, a, b] = Regex.run(@multiply_regex, str)
         {:enabled, <<char>>, sum + String.to_integer(a) * String.to_integer(b)}
+
       true ->
         {:enabled, str <> <<char>>, sum}
     end
