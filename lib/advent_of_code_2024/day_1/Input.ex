@@ -11,6 +11,18 @@ defmodule AdventOfCode2024.Day1.Input do
     |> Tuple.to_list()
   end
 
+  @doc ~S"""
+  Parses the given `line` into a command.
+
+  ## Examples
+
+      iex> AdventOfCode2024.Day1.Input.test_input()
+      [
+        [3, 4, 2, 1, 3, 3],
+        [4, 3, 5, 3, 9, 3]
+      ]
+
+  """
   def test_input do
     [
       [3, 4, 2, 1, 3, 3],
@@ -18,6 +30,14 @@ defmodule AdventOfCode2024.Day1.Input do
     ]
   end
 
+  @doc ~S"""
+  Parses the given `line` into a command.
+
+  ## Examples
+
+      iex> [ "80784   47731", "81682   36089" | tail] = AdventOfCode2024.Day1.Input.input_lines()
+
+  """
   def input_lines do
     File.open!(Path.join(__DIR__, "input.txt"), [:read, :utf8])
     |> IO.stream(:line)
