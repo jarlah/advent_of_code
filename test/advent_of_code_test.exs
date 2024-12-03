@@ -1,4 +1,4 @@
-defmodule AdventOfCode2024Test do
+defmodule AdventOfCodeTest do
   use ExUnit.Case
 
   years = 2024..2080
