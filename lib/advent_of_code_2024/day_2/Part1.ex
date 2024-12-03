@@ -23,8 +23,8 @@ defmodule AdventOfCode2024.Day2.Part1.Solution do
   defp validate_report(report), do: {:unsafe, report}
 
   defp is_acceptable_report(report) do
-    level_validator(report, fn diff -> diff in 1..3 end) ||
-      level_validator(report, fn diff -> diff in -1..-3 end)
+    level_validator(report, &(&1 in 1..3)) ||
+      level_validator(report, &(&1 in -1..-3))
   end
 
   defp level_validator(report, valid) do
