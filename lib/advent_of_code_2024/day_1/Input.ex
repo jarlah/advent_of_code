@@ -12,7 +12,6 @@ defmodule AdventOfCode2024.Day1.Input do
   end
 
   @doc ~S"""
-  Parses the given `line` into a command.
 
   ## Examples
 
@@ -31,7 +30,6 @@ defmodule AdventOfCode2024.Day1.Input do
   end
 
   @doc ~S"""
-  Parses the given `line` into a command.
 
   ## Examples
 
