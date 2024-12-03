@@ -29,7 +29,7 @@ defmodule AOC2024.Day2.Part2.Solution do
 
   defp is_acceptable_report(report) do
     level_validator(report, &(&1 in 1..3)) ||
-      level_validator(report, &(&1 in -1..-3))
+      level_validator(report, &(&1 in -1..-3//-1))
   end
 
   defp level_validator(report, valid) do
