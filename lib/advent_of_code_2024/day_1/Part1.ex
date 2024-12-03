@@ -1,5 +1,4 @@
 defmodule AdventOfCode2024.Day1.Part1.Solution do
-
   def solution(parsed_input) do
     with [list1, list2] <- parsed_input,
          sorted_list1 <- list1 |> Enum.sort(),

@@ -1,5 +1,4 @@
 defmodule AdventOfCode2024.Day2.Part2.Solution do
-
   def solution(parsed_input) do
     parsed_input
     |> Enum.map(&validate_report/1)

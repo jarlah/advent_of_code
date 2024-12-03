@@ -1,5 +1,4 @@
 defmodule AdventOfCode2024.Day3.Part2.Solution do
-
   @multiply_regex ~r/mul\((\d{1,3}),(\d{1,3})\)$/
 
   def solution(input) do

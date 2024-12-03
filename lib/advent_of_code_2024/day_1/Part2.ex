@@ -1,5 +1,4 @@
 defmodule AdventOfCode2024.Day1.Part2.Solution do
-
   def solution(parsed_input) do
     with [list1, list2] <- parsed_input do
       list1
