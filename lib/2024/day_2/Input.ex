@@ -1,6 +1,9 @@
 defmodule AdventOfCode2024.Day2.Input do
   def parsed_input do
-    input_lines()
+    File.open!(Path.join(__DIR__, "input.txt"), [:read, :utf8])
+    |> IO.stream(:line)
+    |> Enum.map(&String.trim/1)
+    |> Enum.reject(&(&1 == ""))
     |> Enum.map(fn line ->
       line
       |> String.split(~r/\s+/)
@@ -17,12 +20,5 @@ defmodule AdventOfCode2024.Day2.Input do
       [8, 6, 4, 4, 1],
       [1, 3, 6, 7, 9]
     ]
-  end
-
-  def input_lines do
-    File.open!(Path.join(__DIR__, "input.txt"), [:read, :utf8])
-    |> IO.stream(:line)
-    |> Enum.map(&String.trim/1)
-    |> Enum.reject(&(&1 == ""))
   end
 end
