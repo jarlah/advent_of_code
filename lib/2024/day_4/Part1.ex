@@ -116,10 +116,8 @@ defmodule AOC2024.Day4.Part1.Solution do
   end
 
   defp append_if_match(acc, {start_row, start_col, end_row, end_col, diagonal}) do
-    if String.match?(diagonal, @regex) do
-      acc ++ [{start_row, start_col, end_row, end_col, diagonal}]
-    else
-      acc
-    end
+    if String.match?(diagonal, @regex),
+      do: acc ++ [{start_row, start_col, end_row, end_col, diagonal}],
+      else: acc
   end
 end
