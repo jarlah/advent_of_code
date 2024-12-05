@@ -111,7 +111,7 @@ defmodule AOC2024.Day4.Part1.Solution do
       end)
     end)
     |> List.flatten()
-    |> IO.inspect()
+    # |> IO.inspect()
     |> length()
   end
 
