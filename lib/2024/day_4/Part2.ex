@@ -1,4 +1,6 @@
 defmodule AOC2024.Day4.Part2.Solution do
+  @regex ~r/MAS|SAM/
+
   @doc ~S"""
   ## Examples
 
@@ -22,7 +24,7 @@ defmodule AOC2024.Day4.Part2.Solution do
           lr_diag = get_diagonal(input, fn i -> {row_idx + i, col_idx + i} end)
           rl_diag = get_diagonal(input, fn i -> {row_idx + i, col_idx - i} end)
 
-          if String.match?(lr_diag, ~r/MAS|SAM/) && String.match?(rl_diag, ~r/MAS|SAM/) do
+          if String.match?(lr_diag, @regex) && String.match?(rl_diag, @regex) do
             [{lr_diag, rl_diag} | acc]
           else
             acc
