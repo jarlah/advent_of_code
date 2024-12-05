@@ -2,11 +2,11 @@ defmodule AOC2024.Day5.Input do
   @doc ~S"""
   ## Examples
 
-      iex> AOC2024.Day5.Input.parsed_input()
+      iex> AOC2024.Day5.Input.parsed_input(AOC2024.Day5.Input.input())
 
   """
-  def parsed_input do
-    input()
+  def parsed_input(input) do
+    input
     |> String.split("\n")
     |> Enum.map(&String.trim/1)
     |> Enum.split_while(&(&1 != ""))
@@ -23,6 +23,10 @@ defmodule AOC2024.Day5.Input do
   """
   def input do
     File.read!(Path.join(__DIR__, "input.txt"))
+  end
+
+  def short_input do
+    File.read!(Path.join(__DIR__, "input.oneupdate.txt"))
   end
 
   def test_input do
