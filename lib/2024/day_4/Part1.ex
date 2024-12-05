@@ -36,9 +36,6 @@ defmodule AOC2024.Day4.Part1.Solution do
               end
             end
           )
-          |> then(fn {start_row, start_col, end_row, end_col, chars} ->
-            {start_row, start_col, end_row, end_col, List.to_string(chars)}
-          end)
 
         vertical =
           Enum.reduce_while(
@@ -55,9 +52,6 @@ defmodule AOC2024.Day4.Part1.Solution do
               end
             end
           )
-          |> then(fn {start_row, start_col, end_row, end_col, chars} ->
-            {start_row, start_col, end_row, end_col, List.to_string(chars)}
-          end)
 
         diagonal_lr =
           Enum.reduce_while(
@@ -77,9 +71,6 @@ defmodule AOC2024.Day4.Part1.Solution do
               end
             end
           )
-          |> then(fn {start_row, start_col, end_row, end_col, chars} ->
-            {start_row, start_col, end_row, end_col, List.to_string(chars)}
-          end)
 
         diagonal_rl =
           Enum.reduce_while(
@@ -99,9 +90,6 @@ defmodule AOC2024.Day4.Part1.Solution do
               end
             end
           )
-          |> then(fn {start_row, start_col, end_row, end_col, chars} ->
-            {start_row, start_col, end_row, end_col, List.to_string(chars)}
-          end)
 
         acc
         |> append_if_match(horizontal)
@@ -116,7 +104,7 @@ defmodule AOC2024.Day4.Part1.Solution do
   end
 
   defp append_if_match(acc, {start_row, start_col, end_row, end_col, diagonal}) do
-    if String.match?(diagonal, @regex),
+    if diagonal |> List.to_string() |> String.match?(@regex),
       do: acc ++ [{start_row, start_col, end_row, end_col, diagonal}],
       else: acc
   end
