@@ -1,5 +1,4 @@
 defmodule AOC2024.Day6.Input do
-
   @doc ~S"""
   ## Examples
 

@@ -1,5 +1,4 @@
 defmodule AOC2024.Day4.Part2.Solution do
-
   @doc ~S"""
   ## Examples
 
@@ -8,5 +7,4 @@ defmodule AOC2024.Day4.Part2.Solution do
 
   """
   def solution, do: 0
-
 end
