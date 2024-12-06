@@ -16,17 +16,13 @@ defmodule AOC2024.Day6.Part1.Solution do
   def solution(input, print_tiles \\ false) do
     map = TileParser.parse(input)
 
-    guard = map |> Enum.find(&Tile.is_guard/1)
-
-    map = traverse_map(map, guard)
+    map = traverse_map(map, Enum.find(map, &Tile.is_guard/1))
 
     if print_tiles,
       do: map |> TileFormatter.print_grid(hd(input) |> String.length()),
       else: nil
 
-    map
-    |> Enum.filter(fn %Tile{visited: visited} -> visited end)
-    |> length()
+    Enum.count(map, fn %Tile{visited: visited} -> visited end)
   end
 
   defp traverse_map(map, %Tile{x: guard_x, y: guard_y, direction: direction} = guard)
