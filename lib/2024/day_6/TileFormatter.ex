@@ -1,6 +1,7 @@
 defmodule AOC2024.Day6.TileFormatter do
   alias AOC2024.Day6.Tile
 
+  @spec print_grid(list(Tile.t()), pos_integer()) :: :ok
   def print_grid(tiles, width) do
     chars = Enum.map(tiles, &Tile.to_string(&1))
     max_len = chars |> Enum.map(&String.length/1) |> Enum.max()

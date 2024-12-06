@@ -15,7 +15,7 @@ defmodule AOC2024.Day6.Tile do
             y: nil,
             obstacle: false,
             guard: false,
-            direction: :up,
+            direction: nil,
             visited: false,
             visited_times: 0
 
