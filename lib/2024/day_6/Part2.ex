@@ -7,7 +7,10 @@ defmodule AOC2024.Day6.Part2.Solution do
   @doc ~S"""
   ## Examples
 
-      iex> AOC2024.Day6.Part2.Solution.solution(AOC2024.Day6.Input.test_obstacle_input(), true)
+      iex> AOC2024.Day6.Part2.Solution.solution(AOC2024.Day6.Input.test_input(), true)
+      6
+
+      iex> AOC2024.Day6.Part2.Solution.solution(AOC2024.Day6.Input.input(), false)
       0 # unknown
 
   """

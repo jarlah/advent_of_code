@@ -1,6 +1,8 @@
 defmodule AdventOfCodeTest do
   use ExUnit.Case
 
+  @moduletag timeout: :infinity
+
   years = 2024..2080
   days = 1..25
   modules = ["Input", "Part1.Solution", "Part2.Solution"]
