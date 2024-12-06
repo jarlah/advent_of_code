@@ -1,6 +1,8 @@
-defmodule TileFormatter do
+defmodule AOC2024.Day6.TileFormatter do
+  alias AOC2024.Day6.Tile
+
   def print_grid(tiles, width) do
-    chars = Enum.map(tiles, & &1.c)
+    chars = Enum.map(tiles, &Tile.to_string(&1))
     max_len = chars |> Enum.map(&String.length/1) |> Enum.max()
 
     horizontal_line = build_horizontal_line(width, max_len)
@@ -12,7 +14,7 @@ defmodule TileFormatter do
 
       row_str =
         row
-        |> Enum.map(&pad_cell(&1.c, max_len))
+        |> Enum.map(&pad_cell(Tile.to_string(&1), max_len))
         |> Enum.join("|")
 
       IO.puts("|" <> row_str <> "|")
