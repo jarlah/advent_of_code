@@ -1,10 +1,12 @@
 defmodule AOC2024.Day6.Tile do
+  @type direction :: :up | :down | :right | :left
+
   @type t() :: %__MODULE__{
           x: integer(),
           y: integer(),
           obstacle: boolean(),
           guard: boolean(),
-          direction: :up | :down | :right | :left,
+          direction: direction(),
           visited: boolean(),
           visited_times: integer()
         }
