@@ -2,10 +2,11 @@ defmodule AOC2024.Day5.Part2.Solution do
   @doc ~S"""
   ## Examples
 
-      iex> AOC2024.Day5.Part2.Solution.solution(AOC2024.Day5.Input.parsed_test_input())
-      123
+      #iex> AOC2024.Day5.Part2.Solution.solution(AOC2024.Day5.Input.parsed_test_input())
+      #123
 
-      iex> AOC2024.Day5.Part2.Solution.solution(AOC2024.Day5.Input.parsed_input(AOC2024.Day5.Input.short_input()))
+      iex> AOC2024.Day5.Part2.Solution.solution(AOC2024.Day5.Input.parsed_input(AOC2024.Day5.Input.input()))
+      6142
 
   """
   def solution({raw_rules, raw_updates}) do
@@ -18,9 +19,7 @@ defmodule AOC2024.Day5.Part2.Solution do
     |> Enum.map(&String.split(&1, ","))
     |> Enum.map(&Enum.map(&1, fn n -> String.to_integer(n) end))
     |> Enum.filter(&(not is_valid_update(&1, rules)))
-    |> IO.inspect(label: "invalid", charlists: :as_lists, limit: :infinity)
     |> Enum.map(&fix_invalid_update(&1, rules))
-    |> IO.inspect(label: "fixed", charlists: :as_lists, limit: :infinity)
     |> Enum.map(&Enum.at(&1, div(length(&1), 2)))
     |> Enum.sum()
   end
@@ -44,24 +43,30 @@ defmodule AOC2024.Day5.Part2.Solution do
   end
 
   defp fix_invalid_update(update, rules) do
-    update
-    |> Enum.reduce(update, fn next, acc ->
-      rules
-      |> Enum.filter(&(&1 |> Tuple.to_list() |> hd() == next))
-      |> Enum.reduce(acc, fn {_, b}, acc_ ->
-        b_index = acc_ |> Enum.find_index(&(&1 == b))
-        new_next_id = acc_ |> Enum.find_index(&(&1 == next))
+    new_update =
+      update
+      |> Enum.reduce(update, fn next, acc ->
+        rules
+        |> Enum.filter(&(&1 |> Tuple.to_list() |> hd() == next))
+        |> Enum.reduce(acc, fn {_, b}, acc_ ->
+          b_index = acc_ |> Enum.find_index(&(&1 == b))
 
-        if b_index == nil do
-          acc_
-        else
-          if b_index < new_next_id do
-            acc_ |> List.replace_at(new_next_id, b) |> List.replace_at(b_index, next)
-          else
+          if b_index == nil do
             acc_
+          else
+            new_next_id = acc_ |> Enum.find_index(&(&1 == next))
+
+            if b_index < new_next_id do
+              acc_ |> List.replace_at(new_next_id, b) |> List.replace_at(b_index, next)
+            else
+              acc_
+            end
           end
-        end
+        end)
       end)
-    end)
+
+    if is_valid_update(new_update, rules),
+      do: new_update,
+      else: fix_invalid_update(new_update, rules)
   end
 end

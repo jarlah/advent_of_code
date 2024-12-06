@@ -6,6 +6,7 @@ defmodule AOC2024.Day5.Part1.Solution do
       143
 
       iex> AOC2024.Day5.Part1.Solution.solution(AOC2024.Day5.Input.parsed_input(AOC2024.Day5.Input.input()))
+      5391
 
   """
   def solution({raw_rules, raw_updates}) do
