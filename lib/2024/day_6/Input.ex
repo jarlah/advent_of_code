@@ -3,7 +3,6 @@ defmodule AOC2024.Day6.Input do
   ## Examples
 
       iex> AOC2024.Day6.Input.input()
-      "TBD"
 
   """
   def input do
