@@ -7,11 +7,11 @@ defmodule AOC2024.Day6.Part2.Solution do
   @doc ~S"""
   ## Examples
 
-      iex> AOC2024.Day6.Part2.Solution.solution(AOC2024.Day6.Input.test_obstacle_input(), true, true)
+      iex> AOC2024.Day6.Part2.Solution.pre_solution(AOC2024.Day6.Input.test_obstacle_input(), true, true)
       31
 
   """
-  def solution(input, print_tiles \\ false, should_cycle \\ false) do
+  def pre_solution(input, print_tiles \\ false, should_cycle \\ false) do
     map = TileParser.parse(input)
 
     {status, map} = TileTraverser.traverse_map(map, Enum.find(map, &Tile.is_guard/1))
