@@ -7,31 +7,40 @@ defmodule AOC2024.Day6.Part2.Solution do
   @doc ~S"""
   ## Examples
 
-      iex> AOC2024.Day6.Part2.Solution.solution(AOC2024.Day6.Input.test_input(), true)
+      iex> AOC2024.Day6.Part2.Solution.solution(AOC2024.Day6.Input.test_input())
       6
 
-      iex> AOC2024.Day6.Part2.Solution.solution(AOC2024.Day6.Input.input(), false)
+      iex> AOC2024.Day6.Part2.Solution.solution(AOC2024.Day6.Input.input())
       0 # unknown
 
   """
-  def solution(input, _print_tiles \\ false) do
+  def solution(input) do
     map = TileParser.parse(input)
 
-    Enum.with_index(map)
-    |> Enum.reduce(0, fn {tile, index}, acc ->
-      if tile.is_guard or tile.is_obstacle do
-        acc
-      else
+    map
+    |> Enum.with_index()
+    |> Enum.filter(fn {tile, _index} -> not (tile.is_guard or tile.is_obstacle) end)
+    |> Task.async_stream(
+      fn {tile, index} ->
         case TileTraverser.traverse_map(
-               List.replace_at(map, index, %Tile{tile | is_obstruction: true}),
-               Enum.find(map, &Tile.is_guard/1)
-             ) do
-          {:cycling, _} -> acc + 1
-          _ -> acc
+              List.replace_at(map, index, %Tile{tile | is_obstruction: true}),
+              Enum.find(map, &Tile.is_guard/1)
+            ) do
+          {:cycling, _} ->
+            IO.inspect("Index #{index} is cycling")
+            1
+          _ ->
+            IO.inspect("OK")
+            0
         end
-      end
-    end)
+      end,
+      max_concurrency: 10, # Limit the number of concurrent tasks
+      timeout: 3_000_000_000     # Optional: Set a timeout for each task
+    )
+    |> Enum.map(fn {:ok, result} -> result end)
+    |> Enum.sum()
   end
+
 
   @doc ~S"""
   ## Examples
