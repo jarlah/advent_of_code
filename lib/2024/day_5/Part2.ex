@@ -50,18 +50,11 @@ defmodule AOC2024.Day5.Part2.Solution do
         |> Enum.filter(&(&1 |> Tuple.to_list() |> hd() == next))
         |> Enum.reduce(acc, fn {_, b}, acc_ ->
           b_index = acc_ |> Enum.find_index(&(&1 == b))
+          new_next_id = acc_ |> Enum.find_index(&(&1 == next))
 
-          if b_index == nil do
-            acc_
-          else
-            new_next_id = acc_ |> Enum.find_index(&(&1 == next))
-
-            if b_index < new_next_id do
-              acc_ |> List.replace_at(new_next_id, b) |> List.replace_at(b_index, next)
-            else
-              acc_
-            end
-          end
+          if b_index < new_next_id,
+            do: acc_ |> List.replace_at(new_next_id, b) |> List.replace_at(b_index, next),
+            else: acc_
         end)
       end)
 
