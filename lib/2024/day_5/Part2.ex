@@ -42,7 +42,7 @@ defmodule AOC2024.Day5.Part2.Solution do
     end)
   end
 
-  defp fix_invalid_update(update, rules) do
+  defp fix_invalid_update(update, rules, passes \\ 0) do
     new_update =
       update
       |> Enum.reduce(update, fn next, acc ->
@@ -65,8 +65,11 @@ defmodule AOC2024.Day5.Part2.Solution do
         end)
       end)
 
-    if is_valid_update(new_update, rules),
-      do: new_update,
-      else: fix_invalid_update(new_update, rules)
+    if is_valid_update(new_update, rules) do
+      # IO.inspect("Used #{passes} passes to fix update")
+      new_update
+    else
+      fix_invalid_update(new_update, rules, passes + 1)
+    end
   end
 end
