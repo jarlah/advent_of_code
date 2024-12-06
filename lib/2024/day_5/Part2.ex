@@ -42,7 +42,7 @@ defmodule AOC2024.Day5.Part2.Solution do
     end)
   end
 
-  defp fix_invalid_update(update, rules, passes \\ 0) do
+  defp fix_invalid_update(update, rules, passes \\ 1) do
     new_update =
       update
       |> Enum.reduce(update, fn next, acc ->
