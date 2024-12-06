@@ -25,10 +25,6 @@ defmodule AOC2024.Day5.Input do
     File.read!(Path.join(__DIR__, "input.txt"))
   end
 
-  def short_input do
-    File.read!(Path.join(__DIR__, "input.oneupdate.txt"))
-  end
-
   def test_input do
     """
       47|53
