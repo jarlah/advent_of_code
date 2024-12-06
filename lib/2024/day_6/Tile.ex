@@ -11,8 +11,8 @@ defmodule AOC2024.Day6.Tile do
           visited_times: integer()
         }
 
-  defstruct x: -1,
-            y: -1,
+  defstruct x: nil,
+            y: nil,
             obstacle: false,
             guard: false,
             direction: :up,
