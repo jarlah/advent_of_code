@@ -13,8 +13,9 @@ defmodule AOC2024.Day6.TileParser do
         %Tile{
           x: x,
           y: y,
-          obstacle: <<col>> == "#",
-          guard: <<col>> == "^",
+          is_obstacle: <<col>> == "#",
+          is_guard: <<col>> == "^",
+          is_obstruction: <<col>> == "O",
           direction: :up
         }
       end)

@@ -4,8 +4,9 @@ defmodule AOC2024.Day6.Tile do
   @type t() :: %__MODULE__{
           x: integer(),
           y: integer(),
-          obstacle: boolean(),
-          guard: boolean(),
+          is_obstacle: boolean(),
+          is_obstruction: boolean(),
+          is_guard: boolean(),
           direction: direction(),
           visited: boolean(),
           visited_times: integer()
@@ -13,17 +14,19 @@ defmodule AOC2024.Day6.Tile do
 
   defstruct x: nil,
             y: nil,
-            obstacle: false,
-            guard: false,
+            is_obstacle: false,
+            is_obstruction: false,
+            is_guard: false,
             direction: nil,
             visited: false,
             visited_times: 0
 
-  def is_guard(%__MODULE__{guard: guard}),
-    do: guard
+  @spec is_guard(AOC2024.Day6.Tile.t()) :: boolean()
+  def is_guard(%__MODULE__{is_guard: is_guard}),
+    do: is_guard
 
-  def is_obstacle(%__MODULE__{obstacle: obstacle}),
-    do: obstacle
+  def is_obstacle(%__MODULE__{is_obstacle: is_obstacle}),
+    do: is_obstacle
 
   def move(%__MODULE__{x: x, y: y, direction: :up} = tile),
     do: %__MODULE__{tile | x: x, y: y - 1}
@@ -53,8 +56,9 @@ defmodule AOC2024.Day6.Tile do
     do: %__MODULE__{tile | visited: true, visited_times: tile.visited_times + 1}
 
   def to_string(%__MODULE__{
-        guard: guard,
-        obstacle: obstacle,
+        is_guard: is_guard,
+        is_obstruction: is_obstruction,
+        is_obstacle: is_obstacle,
         direction: direction,
         visited: visited
       }) do
@@ -62,7 +66,7 @@ defmodule AOC2024.Day6.Tile do
       visited ->
         "X"
 
-      guard ->
+      is_guard ->
         case direction do
           :up -> "^"
           :down -> "v"
@@ -70,8 +74,11 @@ defmodule AOC2024.Day6.Tile do
           :left -> "<"
         end
 
-      obstacle ->
+      is_obstacle ->
         "#"
+
+      is_obstruction ->
+        "O"
 
       true ->
         "."
