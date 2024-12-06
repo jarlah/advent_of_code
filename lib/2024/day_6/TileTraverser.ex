@@ -4,7 +4,7 @@ defmodule AOC2024.Day6.TileTraverser do
   @spec traverse_map(list(Tile.t()), AOC2024.Day6.Tile.t(), integer()) ::
           {:ok, list(Tile.t())} | {:cycling, list(Tile.t())}
   def traverse_map(map, guard, traversals \\ 0)
-  def traverse_map(map, _guard, traversals) when traversals >= length(map), do: {:cycling, map}
+  def traverse_map(map, _guard, traversals) when traversals > length(map) * 2, do: {:cycling, map}
 
   def traverse_map(map, %Tile{x: guard_x, y: guard_y, direction: direction} = guard, traversals)
       when is_list(map) and is_atom(direction) do
