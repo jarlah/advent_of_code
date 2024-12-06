@@ -27,7 +27,7 @@ defmodule AOC2024.Day6.Input do
     ]
   end
 
-  def test_obstactle_input do
+  def test_obstacle_input do
     [
       "....#.....",
       ".........#",
@@ -37,7 +37,7 @@ defmodule AOC2024.Day6.Input do
       "..........",
       ".#..^.....",
       "........#.",
-      "#.O.......",
+      "#..O......",
       "......#..."
     ]
   end

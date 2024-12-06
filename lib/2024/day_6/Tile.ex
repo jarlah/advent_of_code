@@ -25,9 +25,15 @@ defmodule AOC2024.Day6.Tile do
   def is_guard(%__MODULE__{is_guard: is_guard}),
     do: is_guard
 
+  @spec is_obstacle(AOC2024.Day6.Tile.t()) :: boolean()
   def is_obstacle(%__MODULE__{is_obstacle: is_obstacle}),
     do: is_obstacle
 
+  @spec is_obstruction(AOC2024.Day6.Tile.t()) :: boolean()
+  def is_obstruction(%__MODULE__{is_obstruction: is_obstruction}),
+    do: is_obstruction
+
+  @spec move(AOC2024.Day6.Tile.t()) :: AOC2024.Day6.Tile.t()
   def move(%__MODULE__{x: x, y: y, direction: :up} = tile),
     do: %__MODULE__{tile | x: x, y: y - 1}
 
@@ -40,6 +46,7 @@ defmodule AOC2024.Day6.Tile do
   def move(%__MODULE__{x: x, y: y, direction: :left} = tile),
     do: %__MODULE__{tile | x: x - 1, y: y}
 
+  @spec turn(AOC2024.Day6.Tile.t()) :: AOC2024.Day6.Tile.t()
   def turn(%__MODULE__{direction: :up} = tile),
     do: %__MODULE__{tile | direction: :right}
 
@@ -52,9 +59,11 @@ defmodule AOC2024.Day6.Tile do
   def turn(%__MODULE__{direction: :left} = tile),
     do: %__MODULE__{tile | direction: :up}
 
+  @spec visit(AOC2024.Day6.Tile.t()) :: AOC2024.Day6.Tile.t()
   def visit(%__MODULE__{} = tile),
     do: %__MODULE__{tile | visited: true, visited_times: tile.visited_times + 1}
 
+  @spec to_string(AOC2024.Day6.Tile.t()) :: String.t()
   def to_string(%__MODULE__{
         is_guard: is_guard,
         is_obstruction: is_obstruction,
