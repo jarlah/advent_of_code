@@ -16,23 +16,22 @@ defmodule AOC2024.Day6.Part2.Solution do
   def solution(input) do
     map = input |> TileParser.parse()
 
-    {guard_pos, guard} = Enum.find(map, fn {_, tile} -> Tile.is_guard(tile) end)
+    {_, guard} = Enum.find(map, fn {_, tile} -> Tile.is_guard(tile) end)
 
-    start = System.monotonic_time(:microsecond)
+    # start = System.monotonic_time(:microsecond)
 
     result =
       map
       |> TileTraverser.traverse_map(guard)
       |> Map.filter(fn {_, tile} -> tile.visited end)
       |> Map.keys()
-      |> List.delete(guard_pos)
       |> Enum.map(fn pos -> Map.replace(map, pos, Tile.new_obstacle(pos)) end)
       |> Enum.map(fn map -> cycling?(map, guard) end)
       |> Enum.filter(& &1)
       |> Enum.count()
 
-    elapsed = System.monotonic_time(:microsecond) - start
-    IO.puts("Finished in #{elapsed / 1000}ms")
+    # elapsed = System.monotonic_time(:microsecond) - start
+    # IO.puts("Finished in #{elapsed / 1000}ms")
 
     result
   end
