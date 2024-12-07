@@ -11,8 +11,8 @@ defmodule AOC2024.Day7.Part1.Solution do
       3749
   """
   def solution(input) do
-    # total = length(input)
-    # {:ok, agent} = Agent.start_link(fn -> %{total: total, processed: 0} end)
+    total = length(input)
+    {:ok, agent} = Agent.start_link(fn -> %{total: total, processed: 0} end)
 
     input
     |> Stream.map(&String.split(&1, ":"))
@@ -30,16 +30,16 @@ defmodule AOC2024.Day7.Part1.Solution do
       fn {result, numbers} ->
         solved = solve(numbers) |> Enum.find(fn solved -> solved == result end)
 
-        # processed =
-        #   Agent.get_and_update(agent, fn state ->
-        #     new_state = %{state | processed: state.processed + 1}
-        #     {new_state.processed, new_state}
-        #   end)
+        processed =
+          Agent.get_and_update(agent, fn state ->
+            new_state = %{state | processed: state.processed + 1}
+            {new_state.processed, new_state}
+          end)
 
-        # IO.puts("Progress: #{processed}/#{total} (#{Float.round(processed / total * 100, 2)}%)")
+        IO.puts("Progress: #{processed}/#{total} (#{Float.round(processed / total * 100, 2)}%)")
         {result, solved == result}
       end,
-      max_concurrency: 50,
+      max_concurrency: System.get_env("PARALLELISM", "1") |> String.to_integer(),
       timeout: :infinity,
       ordered: false
     )
