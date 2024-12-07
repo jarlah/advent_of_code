@@ -1,28 +1,27 @@
 defmodule AOC2024.Day6.Part1.Solution do
   alias AOC2024.Day6.Tile
   alias AOC2024.Day6.TileParser
-  alias AOC2024.Day6.TileFormatter
   alias AOC2024.Day6.TileTraverser
 
   @doc ~S"""
   ## Examples
 
-      iex> AOC2024.Day6.Part1.Solution.solution(AOC2024.Day6.Input.test_input(), true)
+      iex> AOC2024.Day6.Part1.Solution.solution(AOC2024.Day6.Input.test_input())
       41
 
       iex> AOC2024.Day6.Part1.Solution.solution(AOC2024.Day6.Input.input())
       5131
 
   """
-  def solution(input, print_tiles \\ false) do
-    map = TileParser.parse(input)
+  def solution(input) do
+    map = input |> TileParser.parse()
 
-    {:ok, map} = TileTraverser.traverse_map(map, Enum.find(map, &Tile.is_guard/1))
+    {_, guard} = Enum.find(map, fn {_, tile} -> Tile.is_guard(tile) end)
 
-    if print_tiles,
-      do: TileFormatter.print_grid(map, hd(input) |> String.length()),
-      else: nil
+    map = TileTraverser.traverse_map(map, guard)
 
-    Enum.count(map, fn %Tile{visited: visited} -> visited end)
+    # TileFormatter.print_grid(map, hd(input) |> String.length())
+
+    Enum.count(map, fn {_, %Tile{visited: visited}} -> visited end)
   end
 end
