@@ -31,8 +31,6 @@ defmodule AOC2024.Day6.Part2.Solution do
       |> Enum.filter(& &1)
       |> Enum.count()
 
-    IO.puts("Result: #{result}")
-
     elapsed = System.monotonic_time(:microsecond) - start
     IO.puts("Finished in #{elapsed / 1000}ms")
 
