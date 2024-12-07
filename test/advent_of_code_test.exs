@@ -11,6 +11,7 @@ defmodule AdventOfCodeTest do
     doctest_module = :"Elixir.AOC#{year}.Day#{day}.#{module}"
 
     if Code.ensure_loaded?(doctest_module) do
+      @tag day: "#{year}/#{day}"
       doctest doctest_module
     end
   end
