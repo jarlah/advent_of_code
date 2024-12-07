@@ -29,7 +29,7 @@ defmodule AOC2024.Day7.Part1.Solution do
     |> Task.async_stream(
       fn {result, numbers} ->
         solved =
-          solve(numbers, operators, acc)
+          solve(numbers, operators, acc, result)
           |> Enum.find(fn solved ->
             if is_integer(acc), do: solved == result, else: solved == "#{result}"
           end)
