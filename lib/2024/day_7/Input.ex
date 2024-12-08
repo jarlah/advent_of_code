@@ -32,16 +32,12 @@ defmodule AOC2024.Day7.Input do
     ]
   end
 
-  def normal_operators, do: [&+/2, &-/2, &*/2, &//2]
+  def normal_operators, do: [&+/2, &*/2]
 
-  defp double_pipe(left, right) do
-    left = "#{left}" |> String.split(".") |> hd()
-    right = "#{right}" |> String.split(".") |> hd()
-
-    if String.length(left) > 12 || String.length(right) > 12,
-      do: raise("Too high"),
-      else: "#{left}#{right}" |> String.to_integer()
+  defp double_pipe!(left, right) do
+    combined = "#{left}#{right}"
+    String.to_integer(combined)
   end
 
-  def special_operators, do: normal_operators() ++ [&double_pipe/2]
+  def special_operators, do: normal_operators() ++ [&double_pipe!/2]
 end
