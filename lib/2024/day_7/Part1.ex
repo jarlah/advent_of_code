@@ -4,8 +4,8 @@ defmodule AOC2024.Day7.Part1.Solution do
   @doc ~S"""
   ## Examples
 
-      #iex> AOC2024.Day7.Part1.Solution.solution(AOC2024.Day7.Input.input(), AOC2024.Day7.Input.normal_operators)
-      #945512582195
+      iex> AOC2024.Day7.Part1.Solution.solution(AOC2024.Day7.Input.input(), AOC2024.Day7.Input.normal_operators)
+      945512582195
 
       iex> AOC2024.Day7.Part1.Solution.solution(AOC2024.Day7.Input.test_input(), AOC2024.Day7.Input.normal_operators)
       3749
