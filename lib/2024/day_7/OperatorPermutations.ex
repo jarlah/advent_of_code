@@ -14,7 +14,8 @@ defmodule AOC2024.Day7.OperatorPermutations do
         _ -> false
       end
     rescue
-      _ -> false
+      _ ->
+        false
     end
   end
 
@@ -37,11 +38,21 @@ defmodule AOC2024.Day7.OperatorPermutations do
   defp solve_equation([], _max, acc), do: acc
   defp solve_equation(_, max, acc) when acc > max, do: acc
 
-  defp solve_equation([num1, op, num2 | tail], max, acc) when is_function(op) do
-    solve_equation(tail, max, acc + op.(num1, num2))
+  defp solve_equation([num1, op, num2 | tail], max, acc) when op in ["+", "*", "||"] do
+    new_acc = perform_operation(op, acc, num1, num2)
+    solve_equation(tail, max, new_acc)
   end
 
-  defp solve_equation([op, num2 | tail], max, acc) when is_function(op) do
-    solve_equation(tail, max, op.(acc, num2))
+  defp solve_equation([op, num | tail], max, acc) when op in ["+", "*", "||"] do
+    new_acc = perform_operation(op, acc, num)
+    solve_equation(tail, max, new_acc)
   end
+
+  defp perform_operation("+", acc, num1, num2), do: acc + num1 + num2
+  defp perform_operation("*", acc, num1, num2), do: acc + num1 * num2
+  defp perform_operation("||", acc, num1, num2), do: acc + String.to_integer("#{num1}#{num2}")
+
+  defp perform_operation("+", acc, num), do: acc + num
+  defp perform_operation("*", acc, num), do: acc * num
+  defp perform_operation("||", acc, num), do: String.to_integer("#{acc}#{num}")
 end

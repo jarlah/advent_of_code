@@ -32,12 +32,6 @@ defmodule AOC2024.Day7.Input do
     ]
   end
 
-  def normal_operators, do: [&+/2, &*/2]
-
-  defp double_pipe!(left, right) do
-    combined = "#{left}#{right}"
-    String.to_integer(combined)
-  end
-
-  def special_operators, do: normal_operators() ++ [&double_pipe!/2]
+  def normal_operators, do: ["+", "*"]
+  def special_operators, do: ["+", "*", "||"]
 end

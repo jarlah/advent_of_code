@@ -16,9 +16,7 @@ defmodule AOC2024.Day7.Part1.Solution do
     |> Enum.reduce(0, &solve_and_accumulate(&1, &2, operators))
   end
 
-  defp solve_and_accumulate({{wanted_result, numbers}, problem_number}, acc, operators) do
-    IO.puts("Solving problem ##{problem_number}")
-
+  defp solve_and_accumulate({{wanted_result, numbers}, _problem_number}, acc, operators) do
     case solve(wanted_result, numbers, operators) do
       0 -> acc
       result -> acc + result
