@@ -38,21 +38,21 @@ defmodule AOC2024.Day7.OperatorPermutations do
   defp solve_equation([], _max, acc), do: acc
   defp solve_equation(_, max, acc) when acc > max, do: acc
 
-  defp solve_equation([num1, op, num2 | tail], max, acc) when op in ["+", "*", "||"] do
-    new_acc = perform_operation(op, acc, num1, num2)
-    solve_equation(tail, max, new_acc)
+  defp solve_equation([num1, op, num2 | tail], max, acc) when is_binary(op) do
+    result = perform_operation(op, num1, num2)
+    solve_equation(tail, max, acc + result)
   end
 
-  defp solve_equation([op, num | tail], max, acc) when op in ["+", "*", "||"] do
-    new_acc = perform_operation(op, acc, num)
-    solve_equation(tail, max, new_acc)
+  defp solve_equation([op, num | tail], max, acc) when is_binary(op) do
+    result = perform_operation(op, acc, num)
+    solve_equation(tail, max, result)
   end
 
-  defp perform_operation("+", acc, num1, num2), do: acc + num1 + num2
-  defp perform_operation("*", acc, num1, num2), do: acc + num1 * num2
-  defp perform_operation("||", acc, num1, num2), do: acc + String.to_integer("#{num1}#{num2}")
-
-  defp perform_operation("+", acc, num), do: acc + num
-  defp perform_operation("*", acc, num), do: acc * num
-  defp perform_operation("||", acc, num), do: String.to_integer("#{acc}#{num}")
+  defp perform_operation(op, num1, num2) do
+    case op do
+      "+" -> num1 + num2
+      "*" -> num1 * num2
+      "||" -> String.to_integer("#{num1}#{num2}")
+    end
+  end
 end
