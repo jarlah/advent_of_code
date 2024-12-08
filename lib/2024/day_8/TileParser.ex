@@ -9,17 +9,17 @@ defmodule AOC2024.Day8.TileParser do
       row
       |> String.to_charlist()
       |> Enum.with_index()
-      |> Enum.reduce(acc, fn {col, x}, inner_acc ->
+      |> Enum.reduce(acc, fn {col, x}, acc ->
         position = {x, y}
         tile = parse_tile(col, position)
-        Map.put(inner_acc, position, tile)
+        Map.put(acc, position, tile)
       end)
     end)
   end
 
-  defp parse_tile(col, position) when is_alphanumeric(col) do
-    Tile.new_antenna(position)
-  end
+  defp parse_tile(col, position) when is_alphanumeric(col),
+    do: Tile.new_antenna(position, <<col>>)
 
-  defp parse_tile(_col, position), do: Tile.new_empty(position)
+  defp parse_tile(_col, position),
+    do: Tile.new_empty(position)
 end
