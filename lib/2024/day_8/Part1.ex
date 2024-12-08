@@ -42,8 +42,6 @@ defmodule AOC2024.Day8.Part1.Solution do
   end
 
   def find_matching_antennas(map, start_antenna, width, height) do
-    start = System.monotonic_time(:microsecond)
-
     directions =
       for dx <- 0..width,
           dy <- 0..height,
@@ -51,15 +49,9 @@ defmodule AOC2024.Day8.Part1.Solution do
           Map.has_key?(map, {dx, dy}),
           do: {dx, dy}
 
-    res =
-      Enum.flat_map(directions, fn direction ->
-        find_antenna_in_direction(map, start_antenna, direction)
-      end)
-
-    elapsed = System.monotonic_time(:microsecond) - start
-    IO.puts("Finished in #{elapsed / 1000}ms")
-
-    res
+    Enum.flat_map(directions, fn direction ->
+      find_antenna_in_direction(map, start_antenna, direction)
+    end)
   end
 
   defp find_antenna_in_direction(map, start_antenna, {dx, dy}) do
