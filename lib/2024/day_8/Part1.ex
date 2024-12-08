@@ -12,6 +12,7 @@ defmodule AOC2024.Day8.Part1.Solution do
   """
   def solution(input) do
     width = input |> hd() |> String.to_charlist() |> length()
+    height = input |> length()
 
     map =
       input
@@ -28,7 +29,7 @@ defmodule AOC2024.Day8.Part1.Solution do
 
       IO.inspect("Finding match for #{inspect(pos)}")
 
-      find_matching_antennas(map, tile)
+      find_matching_antennas(map, tile, width, height)
       |> Enum.reduce(acc, fn neighbour, acc ->
         tile = tile |> Tile.set_neighbour(neighbour)
         neighbour = neighbour |> Tile.set_neighbour(tile)
@@ -40,12 +41,12 @@ defmodule AOC2024.Day8.Part1.Solution do
     0
   end
 
-  def find_matching_antennas(map, start_antenna) do
+  def find_matching_antennas(map, start_antenna, width, height) do
     start = System.monotonic_time(:microsecond)
 
     directions =
-      for dx <- 0..map_size(map),
-          dy <- 0..map_size(map),
+      for dx <- 0..width,
+          dy <- 0..height,
           dx != 0 or dy != 0,
           Map.has_key?(map, {dx, dy}),
           do: {dx, dy}
