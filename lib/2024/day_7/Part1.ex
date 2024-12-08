@@ -12,15 +12,16 @@ defmodule AOC2024.Day7.Part1.Solution do
   """
   def solution(input, operators) do
     input
-    |> Enum.with_index()
-    |> Enum.reduce(
-      0,
-      fn {{wanted_result, numbers}, i}, acc ->
-        IO.puts("Solving problem ##{i + 1}")
-        solved = solve(wanted_result, numbers, operators)
+    |> Enum.with_index(1)
+    |> Enum.reduce(0, &solve_and_accumulate(&1, &2, operators))
+  end
 
-        if solved, do: acc + solved, else: acc
-      end
-    )
+  defp solve_and_accumulate({{wanted_result, numbers}, problem_number}, acc, operators) do
+    IO.puts("Solving problem ##{problem_number}")
+
+    case solve(wanted_result, numbers, operators) do
+      0 -> acc
+      result -> acc + result
+    end
   end
 end
