@@ -10,5 +10,9 @@ defmodule AOC2024.Day7.Part2.Solution do
 
   """
   def solution(input),
-    do: AOC2024.Day7.Part1.Solution.solution(input, AOC2024.Day7.Input.special_operators())
+    do:
+      AOC2024.Day7.Part1.Solution.solution(
+        input,
+        AOC2024.Day7.OperatorPermutations.special_operators()
+      )
 end

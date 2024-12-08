@@ -31,7 +31,4 @@ defmodule AOC2024.Day7.Input do
       {292, [11, 6, 16, 20]}
     ]
   end
-
-  def normal_operators, do: ["+", "*"]
-  def special_operators, do: ["+", "*", "||"]
 end

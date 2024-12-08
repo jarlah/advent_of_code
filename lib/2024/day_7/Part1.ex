@@ -4,10 +4,10 @@ defmodule AOC2024.Day7.Part1.Solution do
   @doc ~S"""
   ## Examples
 
-      iex> AOC2024.Day7.Part1.Solution.solution(AOC2024.Day7.Input.input(), AOC2024.Day7.Input.normal_operators)
+      iex> AOC2024.Day7.Part1.Solution.solution(AOC2024.Day7.Input.input(), AOC2024.Day7.OperatorPermutations.normal_operators)
       945512582195
 
-      iex> AOC2024.Day7.Part1.Solution.solution(AOC2024.Day7.Input.test_input(), AOC2024.Day7.Input.normal_operators)
+      iex> AOC2024.Day7.Part1.Solution.solution(AOC2024.Day7.Input.test_input(), AOC2024.Day7.OperatorPermutations.normal_operators)
       3749
   """
   def solution(input, operators) do
@@ -16,7 +16,9 @@ defmodule AOC2024.Day7.Part1.Solution do
     |> Enum.reduce(0, &solve_and_accumulate(&1, &2, operators))
   end
 
-  defp solve_and_accumulate({{wanted_result, numbers}, _problem_number}, acc, operators) do
+  defp solve_and_accumulate({{wanted_result, numbers}, problem_number}, acc, operators) do
+    IO.puts("Day7: Solving problem ##{problem_number}")
+
     case solve(wanted_result, numbers, operators) do
       0 -> acc
       result -> acc + result

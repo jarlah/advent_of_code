@@ -1,4 +1,7 @@
 defmodule AOC2024.Day7.OperatorPermutations do
+  def normal_operators, do: ["+", "*"]
+  def special_operators, do: ["+", "*", "||"]
+
   def solve(wanted_result, numbers, operators) do
     operators
     |> permutations(length(numbers) - 1)
@@ -8,14 +11,9 @@ defmodule AOC2024.Day7.OperatorPermutations do
   defp try_solve_equation(ops, numbers, wanted_result) do
     equation = build_equation(numbers, ops)
 
-    try do
-      case solve_equation(equation, wanted_result) do
-        ^wanted_result -> wanted_result
-        _ -> false
-      end
-    rescue
-      _ ->
-        false
+    case solve_equation(equation, wanted_result) do
+      ^wanted_result -> wanted_result
+      _ -> false
     end
   end
 
