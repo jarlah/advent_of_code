@@ -9,7 +9,13 @@ defmodule AOC2024.Day9.Part2.Solution do
 
   """
   def solution(input) do
-    {blocks, free_ranges, _} = parse_input(input)
+    {blocks, free_ranges, _} =
+      input
+      |> String.to_charlist()
+      |> Enum.map(&String.to_integer(<<&1>>))
+      |> Enum.chunk_every(2, 2)
+      |> Enum.with_index()
+      |> Enum.reduce({[], [], 0}, &process_chunk(&1, &2))
 
     blocks
     |> Enum.reverse()
@@ -56,28 +62,29 @@ defmodule AOC2024.Day9.Part2.Solution do
     {available_ranges, new_checksum}
   end
 
-  defp parse_input(file) do
-    file
-    |> String.to_charlist()
-    |> Enum.map(&String.to_integer(<<&1>>))
-    |> Enum.chunk_every(2, 2)
-    |> Enum.with_index()
-    |> Enum.reduce({[], [], 0}, &process_chunk(&1, &2))
-  end
-
-  defp process_chunk({[number | maybe_free_space], id}, {blocks, free_ranges, current_count}) do
+  defp process_chunk(
+         {[number | maybe_free_space], next_block_id},
+         {blocks, free_ranges, current_count}
+       ) do
     next_free_size = List.first(maybe_free_space, 0)
 
-    new_free_range =
-      if next_free_size > 0 do
-        (current_count + number)..(current_count + number + next_free_size - 1)
-      else
-        ..
-      end
+    # we append a new range to free ranges if next_free_size is not zero
+    new_free_ranges =
+      free_ranges ++
+        [
+          if next_free_size > 0 do
+            (current_count + number)..(current_count + number + next_free_size - 1)
+          else
+            ..
+          end
+        ]
 
-    new_blocks = blocks ++ [{id, current_count..(current_count + number - 1)}]
-    new_free_ranges = free_ranges ++ [new_free_range]
+    # we add the number since the number should repeat "number" times
+    # we also add the next free space since that will amount to next free space amount of dots.
     new_current_count = current_count + number + next_free_size
+
+    # we append a list of a tuple with block id and range to the blocks variable
+    new_blocks = blocks ++ [{next_block_id, current_count..(current_count + number - 1)}]
 
     {new_blocks, new_free_ranges, new_current_count}
   end
