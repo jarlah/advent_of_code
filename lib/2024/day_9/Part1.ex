@@ -11,8 +11,8 @@ defmodule AOC2024.Day9.Part1.Solution do
     |> String.to_charlist()
     |> Enum.map(&String.to_integer(<<&1>>))
     |> parse_raw_format()
-    |> tap(&IO.inspect(Enum.join(&1, ""), limit: :infinity))
     |> Enum.join("")
+    |> tap(&IO.inspect(&1, limit: :infinity))
   end
 
   defp parse_raw_format(list, acc \\ [], block_id \\ 0)
