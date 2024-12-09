@@ -17,18 +17,18 @@ defmodule AOC2024.Day9.Part2.Solution do
     |> elem(1)
   end
 
-  defp process_block({block_id, block_range}, {available_ranges, checksum}) do
+  defp process_block({block_id, block_range}, {free_ranges, checksum}) do
     block_size = Range.size(block_range)
 
     {left_ranges, right_ranges} =
-      Enum.split_while(available_ranges, &fits_condition?(block_size, block_range, &1))
+      Enum.split_while(free_ranges, &fits_condition?(block_size, block_range, &1))
 
     case right_ranges do
       [fits | remaining] ->
         handle_fitting_range(block_id, block_size, fits, remaining, left_ranges, checksum)
 
       [] ->
-        handle_non_fitting_range(block_id, block_range, checksum, available_ranges)
+        handle_non_fitting_range(block_id, block_range, checksum, free_ranges)
     end
   end
 
@@ -65,27 +65,20 @@ defmodule AOC2024.Day9.Part2.Solution do
     |> Enum.reduce({[], [], 0}, &process_chunk(&1, &2))
   end
 
-  defp process_chunk({[nb | rest], id}, {blocks, free_ranges, current_count}) do
-    next_free_size = List.first(rest) || 0
+  defp process_chunk({[number | maybe_free_space], id}, {blocks, free_ranges, current_count}) do
+    next_free_size = List.first(maybe_free_space, 0)
 
-    new_free_range = calculate_free_range(current_count, nb, next_free_size)
+    new_free_range =
+      if next_free_size > 0 do
+        (current_count + number)..(current_count + number + next_free_size - 1)
+      else
+        ..
+      end
 
-    new_blocks = add_block(blocks, id, current_count, nb)
+    new_blocks = blocks ++ [{id, current_count..(current_count + number - 1)}]
     new_free_ranges = free_ranges ++ [new_free_range]
-    new_current_count = current_count + nb + next_free_size
+    new_current_count = current_count + number + next_free_size
 
     {new_blocks, new_free_ranges, new_current_count}
-  end
-
-  defp calculate_free_range(current_count, nb, next_free_size) do
-    if next_free_size > 0 do
-      (current_count + nb)..(current_count + nb + next_free_size - 1)
-    else
-      ..
-    end
-  end
-
-  defp add_block(blocks, id, current_count, nb) do
-    blocks ++ [{id, current_count..(current_count + nb - 1)}]
   end
 end
