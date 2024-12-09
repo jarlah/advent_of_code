@@ -41,34 +41,21 @@ defmodule AOC2024.Day8.Part1.Solution do
         end)
       )
       |> Enum.reduce(acc, fn neighbour, acc ->
-        %Tile{pos: {t_x, t_y}} = tile = tile |> Tile.set_neighbour(neighbour)
-        neighbour = neighbour |> Tile.set_neighbour(tile)
-
-        acc = acc |> Map.replace(neighbour.pos, neighbour) |> Map.replace(tile.pos, tile)
-
         {x, y} = Tile.distance_between(tile, neighbour)
-        antinode_after = {t_x + 2 * x, t_y + 2 * y}
-        antinode_behind = {t_x - x, t_y - y}
+        %Tile{pos: {tile_x, tile_y}} = tile
 
-        acc =
-          if Map.has_key?(acc, antinode_after) do
-            Map.update!(acc, antinode_after, fn tile ->
-              Tile.set_antinode(tile, neighbour.frequency)
-            end)
-          else
-            acc
-          end
-
-        acc =
-          if Map.has_key?(acc, antinode_behind) do
-            Map.update!(acc, antinode_behind, fn tile ->
-              Tile.set_antinode(tile, neighbour.frequency)
-            end)
-          else
-            acc
-          end
-
-        acc
+        [
+          Map.get(acc, {tile_x + 2 * x, tile_y + 2 * y}),
+          Map.get(acc, {tile_x - x, tile_y - y})
+        ]
+        |> Enum.reject(&is_nil/1)
+        |> Enum.reduce(acc, fn tile, acc ->
+          Map.update!(acc, tile.pos, fn tile ->
+            Tile.set_antinode(tile, neighbour.frequency)
+          end)
+        end)
+        |> Map.replace(neighbour.pos, neighbour |> Tile.set_neighbour(tile))
+        |> Map.replace(tile.pos, tile |> Tile.set_neighbour(neighbour))
       end)
     end)
     |> tap(&TileFormatter.print_grid(&1, width))

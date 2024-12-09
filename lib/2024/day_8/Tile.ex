@@ -34,15 +34,14 @@ defmodule AOC2024.Day8.Tile do
   end
 
   def to_string(%__MODULE__{
+        frequency: frequency,
         is_antenna: is_antenna,
-        is_antinode: is_antinode,
-        neighbours: neighbours
+        is_antinode: is_antinode
       }) do
     cond do
-      is_antinode -> "#"
-      is_antenna and Map.keys(neighbours) |> length() > 0 -> "@"
-      is_antenna -> "T"
-      true -> "."
+      is_antinode -> "##{frequency}"
+      is_antenna -> "T#{frequency}"
+      true -> ".#{frequency}"
     end
   end
 end
