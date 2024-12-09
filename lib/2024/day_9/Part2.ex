@@ -2,7 +2,7 @@ defmodule AOC2024.Day9.Part2.Solution do
   @doc ~S"""
   ## Examples
 
-      NB!! This day is shame, shame, shame. I say no more. I did not solve this myself and had to resort to some help. Hopefylly i have learned something
+      NB!! This one is shame, shame, shame. I say no more. I did not solve this myself and had to resort to some help. Hopefylly i have learned something
 
       iex> AOC2024.Day9.Part2.Solution.solution(AOC2024.Day9.Input.input())
       6307653242596

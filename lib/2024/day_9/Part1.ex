@@ -2,6 +2,8 @@ defmodule AOC2024.Day9.Part1.Solution do
   @doc ~S"""
   ## Examples
 
+      This was one was easy and i solved it myself. Got some help on elixir forum on the algo itself, but it was minor help.
+
       iex> AOC2024.Day9.Part1.Solution.read_disk_layout("12345") |> Enum.join("")
       "0..111....22222"
       iex> AOC2024.Day9.Part1.Solution.read_disk_layout("90909") |> Enum.join("")
