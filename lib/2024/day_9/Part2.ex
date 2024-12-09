@@ -6,5 +6,7 @@ defmodule AOC2024.Day9.Part2.Solution do
       0
 
   """
-  def solution(_input), do: 0
+  def solution(_input) do
+    0
+  end
 end
