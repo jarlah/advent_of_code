@@ -1,7 +1,7 @@
 defmodule AOC2024.Day8.Part1.Solution do
   alias AOC2024.Day8.Tile
   alias AOC2024.Day8.TileParser
-  alias AOC2024.Day8.TileFormatter
+  # alias AOC2024.Day8.TileFormatter
 
   @doc ~S"""
   ## Examples
@@ -15,7 +15,7 @@ defmodule AOC2024.Day8.Part1.Solution do
       252
 
   """
-  def solution(input) do
+  def solution(input, resonant_harmonics \\ false) do
     width = input |> hd() |> String.to_charlist() |> length()
     height = input |> length()
 
@@ -30,7 +30,7 @@ defmodule AOC2024.Day8.Part1.Solution do
           do: {dx, dy}
 
     map
-    |> tap(&TileFormatter.print_grid(&1, width))
+    # |> tap(&TileFormatter.print_grid(&1, width))
     |> Map.filter(fn {_, value} -> value.is_antenna end)
     |> Map.keys()
     |> Enum.reduce(map, fn pos, acc ->
@@ -43,13 +43,19 @@ defmodule AOC2024.Day8.Part1.Solution do
         end)
       )
       |> Enum.reduce(acc, fn neighbour, acc ->
-        {x, y} = Tile.distance_between(tile, neighbour)
+        {x, y} = distance = Tile.distance_between(tile, neighbour)
         %Tile{pos: {tile_x, tile_y}} = tile
 
         [
-          Map.get(acc, {tile_x + 2 * x, tile_y + 2 * y}),
-          Map.get(acc, {tile_x - x, tile_y - y})
+          if(resonant_harmonics,
+            do: get_all_antinodes_after(acc, tile, distance),
+            else: [
+              Map.get(acc, {tile_x + 2 * x, tile_y + 2 * y}),
+              Map.get(acc, {tile_x - x, tile_y - y})
+            ]
+          )
         ]
+        |> List.flatten()
         |> Enum.reject(&is_nil/1)
         |> Enum.reduce(acc, fn tile, acc ->
           Map.update!(acc, tile.pos, &Tile.set_antinode(&1, neighbour.frequency))
@@ -58,7 +64,7 @@ defmodule AOC2024.Day8.Part1.Solution do
         |> Map.update!(tile.pos, &Tile.set_neighbour(&1, neighbour))
       end)
     end)
-    |> tap(&TileFormatter.print_grid(&1, width))
+    # |> tap(&TileFormatter.print_grid(&1, width))
     |> Map.values()
     |> Enum.count(fn tile -> tile.is_antinode end)
   end
@@ -75,5 +81,14 @@ defmodule AOC2024.Day8.Part1.Solution do
         [tile]
       end
     end)
+  end
+
+  defp get_all_antinodes_after(map, start_antenna, {dx, dy}) do
+    Stream.iterate(start_antenna.pos, fn {x, y} -> {x + dx, y + dy} end)
+    # Skip the starting position
+    |> Stream.drop(1)
+    |> Stream.take_while(&Map.has_key?(map, &1))
+    |> Stream.map(&Map.get(map, &1))
+    |> Enum.to_list()
   end
 end
