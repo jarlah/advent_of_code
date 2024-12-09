@@ -10,7 +10,8 @@ defmodule AOC2024.Day9.Part1.Solution do
     input
     |> read_disk_layout()
     |> defragment_disk()
-    |> tap(&IO.puts(Enum.join(&1, "")))
+    |> Enum.join("")
+    |> tap(&IO.puts(&1))
   end
 
   @doc ~S"""
