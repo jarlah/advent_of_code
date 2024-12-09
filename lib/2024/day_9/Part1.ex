@@ -2,6 +2,10 @@ defmodule AOC2024.Day9.Part1.Solution do
   @doc ~S"""
   ## Examples
 
+      iex> AOC2024.Day9.Part1.Solution.solution("12345")
+      "0..111....22222"
+      iex> AOC2024.Day9.Part1.Solution.solution("90909")
+      "000000000..111111111..222222222"
       iex> AOC2024.Day9.Part1.Solution.solution(AOC2024.Day9.Input.test_input())
       "00...111...2...333.44.5555.6666.777.888899"
 
