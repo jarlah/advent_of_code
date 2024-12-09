@@ -8,7 +8,6 @@ defmodule AOC2024.Day6.Part2.Solution do
 
       iex> AOC2024.Day6.Part2.Solution.solution(AOC2024.Day6.Input.test_input())
       6
-
       iex> AOC2024.Day6.Part2.Solution.solution(AOC2024.Day6.Input.input())
       1784
 

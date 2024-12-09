@@ -4,7 +4,6 @@ defmodule AOC2024.Day5.Part1.Solution do
 
       iex> AOC2024.Day5.Part1.Solution.solution(AOC2024.Day5.Input.parsed_test_input())
       143
-
       iex> AOC2024.Day5.Part1.Solution.solution(AOC2024.Day5.Input.parsed_input(AOC2024.Day5.Input.input()))
       5391
 

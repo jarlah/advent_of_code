@@ -1,5 +1,5 @@
 defmodule AOC2024.Day8.TileParser do
-  import AOC2024.Day8.Guards, only: [is_alphanumeric: 1]
+  import AOC2024.Day8.Utils, only: [is_alphanumeric: 1]
   alias AOC2024.Day8.Tile
 
   def parse(input) do

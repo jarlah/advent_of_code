@@ -5,9 +5,12 @@ defmodule AOC2024.Day8.Part1.Solution do
 
   @doc ~S"""
   ## Examples
-
-      iex> AOC2024.Day8.Part1.Solution.solution(AOC2024.Day8.Input.input())
-      0
+      iex> AOC2024.Day8.Tile.distance_between(%AOC2024.Day8.Tile{pos: {1,5}}, %AOC2024.Day8.Tile{pos: {7, 3}})
+      {6, -2}
+      iex> AOC2024.Day8.Tile.distance_between(%AOC2024.Day8.Tile{pos: {6,5}}, %AOC2024.Day8.Tile{pos: {2, 3}})
+      {-4, -2}
+      iex> AOC2024.Day8.Part1.Solution.solution(AOC2024.Day8.Input.test_input())
+      14
 
   """
   def solution(input) do
@@ -17,41 +20,61 @@ defmodule AOC2024.Day8.Part1.Solution do
     map =
       input
       |> TileParser.parse()
-      |> tap(&TileFormatter.print_grid(&1, width))
 
-    IO.puts("")
+    directions =
+      for dx <- -width..width,
+          dy <- -height..height,
+          dx != 0 or dy != 0,
+          Map.has_key?(map, {dx, dy}),
+          do: {dx, dy}
 
     map
+    |> tap(&TileFormatter.print_grid(&1, width))
     |> Map.filter(fn {_, value} -> value.is_antenna end)
     |> Map.keys()
     |> Enum.reduce(map, fn pos, acc ->
       tile = Map.get(map, pos)
 
-      IO.inspect("Finding match for #{inspect(pos)}")
-
-      find_matching_antennas(map, tile, width, height)
+      map
+      |> then(
+        &Enum.flat_map(directions, fn direction ->
+          find_antenna_in_direction(&1, tile, direction)
+        end)
+      )
       |> Enum.reduce(acc, fn neighbour, acc ->
-        tile = tile |> Tile.set_neighbour(neighbour)
+        %Tile{pos: {t_x, t_y}} = tile = tile |> Tile.set_neighbour(neighbour)
         neighbour = neighbour |> Tile.set_neighbour(tile)
-        acc |> Map.replace(neighbour.pos, neighbour) |> Map.replace(tile.pos, tile)
+
+        acc = acc |> Map.replace(neighbour.pos, neighbour) |> Map.replace(tile.pos, tile)
+
+        {x, y} = Tile.distance_between(tile, neighbour) |> IO.inspect()
+        antinode_after = {t_x + 2 * x, t_y + 2 * y}
+        antinode_behind = {t_x - x, t_y - y}
+
+        acc =
+          if Map.has_key?(acc, antinode_after) do
+            Map.update!(acc, antinode_after, fn tile ->
+              Tile.set_antinode(tile, neighbour.frequency)
+            end)
+          else
+            acc
+          end
+
+        acc =
+          if Map.has_key?(acc, antinode_behind) do
+            Map.update!(acc, antinode_behind, fn tile ->
+              Tile.set_antinode(tile, neighbour.frequency)
+            end)
+          else
+            acc
+          end
+
+        acc
       end)
     end)
     |> tap(&TileFormatter.print_grid(&1, width))
-
-    0
-  end
-
-  def find_matching_antennas(map, start_antenna, width, height) do
-    directions =
-      for dx <- 0..width,
-          dy <- 0..height,
-          dx != 0 or dy != 0,
-          Map.has_key?(map, {dx, dy}),
-          do: {dx, dy}
-
-    Enum.flat_map(directions, fn direction ->
-      find_antenna_in_direction(map, start_antenna, direction)
-    end)
+    |> Map.values()
+    |> Enum.count(fn tile -> tile.is_antinode end)
   end
 
   defp find_antenna_in_direction(map, start_antenna, {dx, dy}) do
