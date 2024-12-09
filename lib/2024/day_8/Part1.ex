@@ -25,7 +25,6 @@ defmodule AOC2024.Day8.Part1.Solution do
       for dx <- -width..width,
           dy <- -height..height,
           dx != 0 or dy != 0,
-          Map.has_key?(map, {dx, dy}),
           do: {dx, dy}
 
     map
@@ -47,7 +46,7 @@ defmodule AOC2024.Day8.Part1.Solution do
 
         acc = acc |> Map.replace(neighbour.pos, neighbour) |> Map.replace(tile.pos, tile)
 
-        {x, y} = Tile.distance_between(tile, neighbour) |> IO.inspect()
+        {x, y} = Tile.distance_between(tile, neighbour)
         antinode_after = {t_x + 2 * x, t_y + 2 * y}
         antinode_behind = {t_x - x, t_y - y}
 
