@@ -10,23 +10,28 @@ defmodule AOC2024.Day9.Part1.Solution do
       "00...111...2...333.44.5555.6666.777.888899"
       iex> AOC2024.Day9.Part1.Solution.read_disk_layout(AOC2024.Day9.Input.input())
       iex> AOC2024.Day9.Part1.Solution.solution(AOC2024.Day9.Input.test_input())
-      "0099811188827773336446555566.............."
+      1928
+      #iex> AOC2024.Day9.Part1.Solution.solution(AOC2024.Day9.Input.input())
+      #6283170117911
 
   """
   def solution(input) do
     input
     |> read_disk_layout()
-    |> defragment_disk()
-    |> Enum.join("")
-    |> tap(&IO.puts(&1))
+    |> start_defragmentation()
+    |> Enum.with_index()
+    |> Enum.reduce(0, fn
+      {n, i}, acc when n != "." -> acc + i * String.to_integer(n)
+      _, acc -> acc
+    end)
   end
 
+  @spec read_disk_layout(binary()) :: list()
   def read_disk_layout(input) do
     input
     |> String.to_charlist()
     |> Enum.map(&String.to_integer(<<&1>>))
     |> parse_raw_format()
-    |> tap(&IO.puts(Enum.join(&1, "")))
   end
 
   defp parse_raw_format(list, acc \\ [], block_id \\ 0)
@@ -50,5 +55,33 @@ defmodule AOC2024.Day9.Part1.Solution do
     )
   end
 
-  defp defragment_disk(input, _acc \\ []), do: input
+  defp start_defragmentation(list) do
+    defragment(list, [])
+  end
+
+  defp defragment([], acc), do: Enum.reverse(acc)
+
+  defp defragment([head | tail], acc) do
+    {replaced, tail} = process_item(head, tail)
+    new_acc = [replaced | acc]
+    defragment(tail, new_acc)
+  end
+
+  defp process_item(char, []), do: {char, []}
+
+  defp process_item(".", tail) do
+    last_idx = tail |> Enum.reverse() |> Enum.find_index(&(&1 != "."))
+
+    if last_idx == nil do
+      {".", tail}
+    else
+      last_idx = (tail |> tl() |> length()) - last_idx
+      {last_char, _} = List.pop_at(tail, last_idx)
+      {last_char, List.update_at(tail, last_idx, fn _ -> "." end)}
+    end
+  end
+
+  defp process_item(char, tail) do
+    {char, tail}
+  end
 end
