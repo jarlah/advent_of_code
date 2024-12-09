@@ -11,6 +11,8 @@ defmodule AOC2024.Day8.Part1.Solution do
       {-4, -2}
       iex> AOC2024.Day8.Part1.Solution.solution(AOC2024.Day8.Input.test_input())
       14
+      iex> AOC2024.Day8.Part1.Solution.solution(AOC2024.Day8.Input.input())
+      252
 
   """
   def solution(input) do
@@ -50,12 +52,10 @@ defmodule AOC2024.Day8.Part1.Solution do
         ]
         |> Enum.reject(&is_nil/1)
         |> Enum.reduce(acc, fn tile, acc ->
-          Map.update!(acc, tile.pos, fn tile ->
-            Tile.set_antinode(tile, neighbour.frequency)
-          end)
+          Map.update!(acc, tile.pos, &Tile.set_antinode(&1, neighbour.frequency))
         end)
-        |> Map.replace(neighbour.pos, neighbour |> Tile.set_neighbour(tile))
-        |> Map.replace(tile.pos, tile |> Tile.set_neighbour(neighbour))
+        |> Map.update!(neighbour.pos, &Tile.set_neighbour(&1, tile))
+        |> Map.update!(tile.pos, &Tile.set_neighbour(&1, neighbour))
       end)
     end)
     |> tap(&TileFormatter.print_grid(&1, width))
