@@ -55,23 +55,23 @@ defmodule AOC2024.Day10.Part2.Solution do
     Map.update!(map, trail_head.pos, fn tile -> %Tile{tile | score: tile.score + score} end)
   end
 
+  defp get_all_paths_to_target(trail_head, target_tile, _map, _visited)
+       when trail_head.pos == target_tile.pos,
+       do: 1
+
   defp get_all_paths_to_target(trail_head, target_tile, map, visited) do
-    if trail_head.pos == target_tile.pos do
-      1
-    else
-      new_visited = Map.put(visited, trail_head.pos, true)
-      possible_moves = Tile.possible_moves(trail_head)
+    new_visited = Map.put(visited, trail_head.pos, true)
+    possible_moves = Tile.possible_moves(trail_head)
 
-      Enum.reduce(possible_moves, 0, fn next_tile_pos, acc ->
-        next_tile = Map.get(map, next_tile_pos)
+    Enum.reduce(possible_moves, 0, fn next_tile_pos, acc ->
+      next_tile = Map.get(map, next_tile_pos)
 
-        if next_tile && next_tile.number == trail_head.number + 1 &&
-             !Map.get(new_visited, next_tile_pos) do
-          acc + get_all_paths_to_target(next_tile, target_tile, map, new_visited)
-        else
-          acc
-        end
-      end)
-    end
+      if next_tile && next_tile.number == trail_head.number + 1 &&
+           !Map.get(new_visited, next_tile_pos) do
+        acc + get_all_paths_to_target(next_tile, target_tile, map, new_visited)
+      else
+        acc
+      end
+    end)
   end
 end

@@ -57,21 +57,21 @@ defmodule AOC2024.Day10.Part1.Solution do
     Map.update!(map, trail_head.pos, fn tile -> %Tile{tile | score: tile.score + score} end)
   end
 
+  defp can_find_incremental_path_to(trail_head, target_tile, _map)
+       when trail_head.pos == target_tile.pos,
+       do: true
+
   defp can_find_incremental_path_to(trail_head, target_tile, map) do
-    if trail_head.pos == target_tile.pos do
-      true
-    else
-      possible_moves = Tile.possible_moves(trail_head)
+    possible_moves = Tile.possible_moves(trail_head)
 
-      Enum.any?(possible_moves, fn next_tile_pos ->
-        next_tile = Map.get(map, next_tile_pos)
+    Enum.any?(possible_moves, fn next_tile_pos ->
+      next_tile = Map.get(map, next_tile_pos)
 
-        if next_tile && next_tile.number == trail_head.number + 1 do
-          can_find_incremental_path_to(next_tile, target_tile, map)
-        else
-          false
-        end
-      end)
-    end
+      if next_tile && next_tile.number == trail_head.number + 1 do
+        can_find_incremental_path_to(next_tile, target_tile, map)
+      else
+        false
+      end
+    end)
   end
 end
