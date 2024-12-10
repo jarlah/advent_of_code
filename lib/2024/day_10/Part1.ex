@@ -12,7 +12,7 @@ defmodule AOC2024.Day10.Part1.Solution do
   """
   def solution(input) do
     map = get_map(input)
-    solve_part1(map)
+    solve(map)
   end
 
   def get_map(input) do
@@ -34,7 +34,7 @@ defmodule AOC2024.Day10.Part1.Solution do
     end)
   end
 
-  defp solve_part1(map) do
+  defp solve(map) do
     map
     |> Map.filter(fn {_, tile} -> tile.is_trail_head end)
     |> Map.values()
