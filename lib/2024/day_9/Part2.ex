@@ -15,27 +15,33 @@ defmodule AOC2024.Day9.Part2.Solution do
       |> Enum.map(&String.to_integer(<<&1>>))
       |> Enum.chunk_every(2, 2)
       |> Enum.with_index()
-      |> Enum.reduce({[], [], 0}, &process_chunk(&1, &2))
+      |> Enum.reduce({%{}, [], 0}, &process_chunk(&1, &2))
 
-    blocks
-    |> Enum.reverse()
-    |> Enum.reduce({free_ranges, 0}, &process_block(&1, &2))
-    |> elem(1)
+    get_checksum(blocks, free_ranges, 0, Enum.max(blocks))
   end
 
-  defp process_block({block_id, block_range}, {free_ranges, checksum}) do
-    block_size = Range.size(block_range)
+  defp get_checksum(_blocks, _free_ranges, checksum, nil), do: checksum
 
+  defp get_checksum(blocks, free_ranges, checksum, {block_id, {block_range, block_size}}) do
     {left_ranges, right_ranges} =
       Enum.split_while(free_ranges, &fits_condition?(block_size, block_range, &1))
 
-    case right_ranges do
-      [fits | remaining] ->
-        handle_fitting_range(block_id, block_size, fits, remaining, left_ranges, checksum)
+    {updated_free_ranges, new_checksum} =
+      case right_ranges do
+        [fits | remaining] ->
+          handle_fitting_range(block_id, block_size, fits, remaining, left_ranges, checksum)
 
-      [] ->
-        handle_non_fitting_range(block_id, block_range, checksum, free_ranges)
-    end
+        [] ->
+          handle_non_fitting_range(block_id, block_range, checksum, free_ranges)
+      end
+
+    next_block =
+      case Map.fetch(blocks, block_id - 1) do
+        {:ok, value} -> {block_id - 1, value}
+        :error -> nil
+      end
+
+    get_checksum(blocks, updated_free_ranges, new_checksum, next_block)
   end
 
   defp fits_condition?(block_size, block_range, free_range) do
@@ -83,8 +89,8 @@ defmodule AOC2024.Day9.Part2.Solution do
     # we also add the next free space since that will amount to next free space amount of dots.
     new_current_count = current_count + number + next_free_size
 
-    # we append a list of a tuple with block id and range to the blocks variable
-    new_blocks = blocks ++ [{next_block_id, current_count..(current_count + number - 1)}]
+    block_range = current_count..(current_count + number - 1)
+    new_blocks = Map.put(blocks, next_block_id, {block_range, Range.size(block_range)})
 
     {new_blocks, new_free_ranges, new_current_count}
   end
