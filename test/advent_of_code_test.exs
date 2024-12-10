@@ -5,13 +5,14 @@ defmodule AdventOfCodeTest do
 
   years = 2024..2080
   days = 1..25
-  modules = ["Input", "Part1.Solution", "Part2.Solution"]
+  parts = 1..2
 
-  for year <- years, day <- days, module <- modules do
-    doctest_module = :"Elixir.AOC#{year}.Day#{day}.#{module}"
+  for year <- years, day <- days, part <- parts do
+    doctest_module = :"Elixir.AOC#{year}.Day#{day}.Part#{part}.Solution"
 
     if Code.ensure_loaded?(doctest_module) do
-      @tag day: "#{year}/#{day}"
+      @tag year: "#{year}"
+      @tag day: "#{day}.part#{part}"
       doctest doctest_module
     end
   end

@@ -6,6 +6,8 @@ defmodule AOC2024.Day9.Part2.Solution do
 
       iex> AOC2024.Day9.Part2.Solution.solution(AOC2024.Day9.Input.input())
       6307653242596
+      iex> AOC2024.Day9.Part2.Solution.solution(AOC2024.Day9.Input.test_input())
+      2858
 
   """
   def solution(input) do
@@ -24,15 +26,26 @@ defmodule AOC2024.Day9.Part2.Solution do
 
   defp get_checksum(blocks, free_ranges, checksum, {block_id, {block_range, block_size}}) do
     {left_ranges, right_ranges} =
-      Enum.split_while(free_ranges, &fits_condition?(block_size, block_range, &1))
+      Enum.split_while(
+        free_ranges,
+        # IF block_size is larger than the free_range size
+        # OR if free_range first index is after block_range first index
+        # THEN we return true.
+        # ELSE we return false (then we have a free_range that is large enough AND before the block_range)
+        &(block_size > Range.size(&1) or &1.first > block_range.first)
+      )
 
     {updated_free_ranges, new_checksum} =
       case right_ranges do
         [fits | remaining] ->
-          handle_fitting_range(block_id, block_size, fits, remaining, left_ranges, checksum)
+          {overlapping_range, remaining_free} = Range.split(fits, block_size)
+          updated_free_ranges = left_ranges ++ [remaining_free | remaining]
+          new_checksum = checksum + block_id * Enum.sum(overlapping_range)
+          {updated_free_ranges, new_checksum}
 
         [] ->
-          handle_non_fitting_range(block_id, block_range, checksum, free_ranges)
+          new_checksum = checksum + block_id * Enum.sum(block_range)
+          {free_ranges, new_checksum}
       end
 
     next_block =
@@ -44,30 +57,6 @@ defmodule AOC2024.Day9.Part2.Solution do
     get_checksum(blocks, updated_free_ranges, new_checksum, next_block)
   end
 
-  defp fits_condition?(block_size, block_range, free_range) do
-    block_size > Range.size(free_range) or free_range.first > block_range.first
-  end
-
-  defp handle_fitting_range(block_id, block_size, fits, remaining, left_ranges, checksum) do
-    {overlap, remaining_free} = Range.split(fits, block_size)
-
-    updated_free_ranges =
-      if remaining_free.step == 1 do
-        left_ranges ++ [remaining_free | remaining]
-      else
-        left_ranges ++ remaining
-      end
-
-    new_checksum = checksum + block_id * Enum.sum(overlap)
-
-    {updated_free_ranges, new_checksum}
-  end
-
-  defp handle_non_fitting_range(block_id, block_range, checksum, available_ranges) do
-    new_checksum = checksum + block_id * Enum.sum(block_range)
-    {available_ranges, new_checksum}
-  end
-
   defp process_chunk(
          {[number | maybe_free_space], next_block_id},
          {blocks, free_ranges, current_count}
@@ -76,14 +65,13 @@ defmodule AOC2024.Day9.Part2.Solution do
 
     # we append a new range to free ranges if next_free_size is not zero
     new_free_ranges =
-      free_ranges ++
-        [
-          if next_free_size > 0 do
-            (current_count + number)..(current_count + number + next_free_size - 1)
-          else
-            ..
-          end
-        ]
+      if next_free_size > 0,
+        do:
+          free_ranges ++
+            [
+              (current_count + number)..(current_count + number + next_free_size - 1)
+            ],
+        else: free_ranges
 
     # we add the number since the number should repeat "number" times
     # we also add the next free space since that will amount to next free space amount of dots.

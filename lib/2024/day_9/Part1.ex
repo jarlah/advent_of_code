@@ -13,8 +13,8 @@ defmodule AOC2024.Day9.Part1.Solution do
       iex> AOC2024.Day9.Part1.Solution.read_disk_layout(AOC2024.Day9.Input.input())
       iex> AOC2024.Day9.Part1.Solution.solution(AOC2024.Day9.Input.test_input())
       1928
-      #iex> AOC2024.Day9.Part1.Solution.solution(AOC2024.Day9.Input.input())
-      #6283170117911
+      iex> AOC2024.Day9.Part1.Solution.solution(AOC2024.Day9.Input.input())
+      6283170117911
 
   """
   def solution(input) do

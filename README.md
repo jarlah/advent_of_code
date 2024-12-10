@@ -2,6 +2,6 @@
 
 My own solutions for AOC 2024 and onwards, in Elixir.
 
-Run tests for specific day only:
+Run tests for specific day and part only:
 
-`mix test[.watch] --only day:2024/7`
+`mix test[.watch] --only day:7.part1`
