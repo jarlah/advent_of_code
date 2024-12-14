@@ -1,6 +1,6 @@
 defmodule Mix.Tasks.SetupDay do
   def run([year_number, day_number]) do
-    base_path = Path.absname("lib/#{year_number}/day_#{day_number}/")
+    base_path = Path.absname("solutions/#{year_number}/day_#{day_number}/")
 
     with lib_path = Path.join(base_path, "lib"),
          :ok <- File.mkdir_p(lib_path),
