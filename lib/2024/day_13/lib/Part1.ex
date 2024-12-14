@@ -5,7 +5,7 @@ defmodule AOC2024.Day13.Part1.Solution do
       iex> AOC2024.Day13.Part1.Solution.solution(AOC2024.Day13.Input.test_input())
       480
       iex> AOC2024.Day13.Part1.Solution.solution(AOC2024.Day13.Input.input())
-      0 # unknown
+      37901
 
   """
   def solution(input) do
@@ -94,7 +94,7 @@ defmodule AOC2024.Day13.Part1.Solution do
        ) do
     current_x = presses_a * x_inc_a + presses_b * x_inc_b
     current_y = presses_a * y_inc_a + presses_b * y_inc_b
-    current_x >= target_x and current_y >= target_y
+    current_x === target_x and current_y === target_y
   end
 
   defp try_next_buttons({presses_a, presses_b, cost}, queue, visited) do
