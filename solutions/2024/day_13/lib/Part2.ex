@@ -24,6 +24,10 @@ defmodule AOC2024.Day13.Part2.Solution do
     |> Enum.sum()
   end
 
+  @doc ~S"""
+  Linear algebra tells us there is at most one solution to this system of equations (that it’s integer division doesn’t play into it).
+  We can solve with a simple application of Cramer’s rule or any equivalent method.
+  """
   def solve_machine([[a, c], [b, d], [e, f]]) do
     x = (d * e - b * f) / (a * d - b * c)
     y = (a * f - c * e) / (a * d - b * c)
