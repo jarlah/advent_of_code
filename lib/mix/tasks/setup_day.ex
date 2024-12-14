@@ -8,7 +8,6 @@ defmodule Mix.Tasks.SetupDay do
          :ok <- File.mkdir_p(test_path) do
       create_file(base_path, "mix.exs", generate_mix_file(year_number, day_number))
       create_file(base_path, ".formatter.exs", generate_formatter_file())
-      create_file(lib_path, "Input.ex", generate_input_module_content(year_number, day_number))
       create_file(lib_path, "Part1.ex", generate_part_module_content(year_number, day_number, 1))
       create_file(lib_path, "Part2.ex", generate_part_module_content(year_number, day_number, 2))
       create_file(test_path, "doc_test.exs", generate_doc_test_content(year_number, day_number))
@@ -84,26 +83,13 @@ defmodule Mix.Tasks.SetupDay do
     end
   end
 
-  defp generate_input_module_content(year_number, day_number) do
-    """
-    defmodule AOC#{year_number}.Day#{day_number}.Input do
-      def input do
-        File.read!(Path.join(__DIR__, "input.txt"))
-        |> String.split("\\n")
-        |> Enum.map(&String.trim/1)
-        |> Enum.reject(&(&1 == ""))
-      end
-    end
-    """
-  end
-
   defp generate_part_module_content(year_number, day_number, part_number) do
     """
     defmodule AOC#{year_number}.Day#{day_number}.Part#{part_number}.Solution do
       @doc ~S\"\"\"
       ## Examples
 
-          iex> AOC#{year_number}.Day#{day_number}.Part#{part_number}.Solution.solution(AOC#{year_number}.Day#{day_number}.Input.input())
+          iex> AOC#{year_number}.Day#{day_number}.Part#{part_number}.Solution.solution(Common.read_file_to_lines!("input.txt"))
           0
 
       \"\"\"
