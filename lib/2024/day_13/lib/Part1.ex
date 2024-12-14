@@ -2,7 +2,7 @@ defmodule AOC2024.Day13.Part1.Solution do
   @doc ~S"""
   ## Examples
 
-      iex> AOC2024.Day13.Part1.Solution.solution(Common.read_string_to_lines!("""
+      iex> AOC2024.Day13.Part1.Solution.solution(Common.read_string_to_lines!(\"""
       ...>Button A: X+94, Y+34
       ...>Button B: X+22, Y+67
       ...>Prize: X=8400, Y=5400
@@ -19,14 +19,14 @@ defmodule AOC2024.Day13.Part1.Solution do
       ...>Button B: X+27, Y+71
       ...>Prize: X=18641, Y=10279
       ...>
-      ...>"""))
+      ...>\"""))
       480
       iex> AOC2024.Day13.Part1.Solution.solution(Common.read_file_to_lines!("input.txt"))
       37901
 
   """
-  def solution(input) do
-    input
+  def solution(lines) do
+    lines
     |> Enum.chunk_every(3, 3)
     |> Enum.map(fn list ->
       Enum.map(list, &String.split(&1, ":"))

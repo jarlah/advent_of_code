@@ -19,7 +19,8 @@ defmodule Day1.MixProject do
 
   defp deps do
     [
-      {:common, path: "../../common"}
+      {:common, path: "../../common"},
+      {:mix_test_watch, "~> 1.0", only: [:dev, :test], runtime: false}
     ]
   end
 end
