@@ -2,6 +2,8 @@
 
 My own solutions for AOC 2024 and onwards, in Elixir.
 
-Run tests for specific day and part only:
+Setup new day:
 
-`mix test[.watch] --only day:7.part1`
+`mix setup_day 2024 7`
+
+This will create a standalone project in `solutions/2024/day_7`
