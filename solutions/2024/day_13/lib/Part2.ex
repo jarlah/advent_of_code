@@ -13,11 +13,11 @@ defmodule AOC2024.Day13.Part2.Solution do
       Map.put(config, "Prize", {x + 10_000_000_000_000, y + 10_000_000_000_000})
     end)
     |> Enum.map(fn config ->
-      [
-        Map.get(config, "Button A") |> Tuple.to_list(),
-        Map.get(config, "Button B") |> Tuple.to_list(),
-        Map.get(config, "Prize") |> Tuple.to_list()
-      ]
+      {
+        Map.get(config, "Button A"),
+        Map.get(config, "Button B"),
+        Map.get(config, "Prize")
+      }
     end)
     |> Enum.map(&solve_machine/1)
     |> Enum.flat_map(&calculate_cost/1)
@@ -28,9 +28,9 @@ defmodule AOC2024.Day13.Part2.Solution do
   Linear algebra tells us there is at most one solution to this system of equations (that it’s integer division doesn’t play into it).
   We can solve with a simple application of Cramer’s rule or any equivalent method.
   """
-  def solve_machine([[a, c], [b, d], [e, f]]) do
-    x = (d * e - b * f) / (a * d - b * c)
-    y = (a * f - c * e) / (a * d - b * c)
+  def solve_machine({{aX, aY}, {bX, bY}, {tX, tY}}) do
+    x = (bY * tX - bX * tY) / (aX * bY - bX * aY)
+    y = (aX * tY - aY * tX) / (aX * bY - bX * aY)
 
     if floor(x) == x and floor(y) == y do
       [trunc(x), trunc(y)]
