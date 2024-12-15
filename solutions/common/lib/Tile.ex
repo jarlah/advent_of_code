@@ -13,7 +13,7 @@ defmodule Tile do
             display: nil
 
   def move(%__MODULE__{x: x, y: y} = tile, dx, dy) do
-    %__MODULE__{tile | x: tile.x + dx, y: tile.y + dy}
+    %__MODULE__{tile | x: x + dx, y: y + dy}
   end
 
   def print_tile_map(map, options \\ []) do
