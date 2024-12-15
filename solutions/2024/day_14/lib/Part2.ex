@@ -11,7 +11,7 @@ defmodule AOC2024.Day14.Part2.Solution do
   def solution(input) do
     robots = input |> parse_robots()
 
-    Range.new(1, 10000)
+    Stream.iterate(1, &(&1 + 1))
     |> Task.async_stream(
       fn seconds ->
         if rem(seconds, 1000) == 0, do: IO.puts("Generated frame for #{seconds} seconds")
