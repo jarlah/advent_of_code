@@ -14,7 +14,7 @@ defmodule AOC2024.Day15.Part1.Solution do
       ...>
       ...><^^>>>vv<v>>v<<
       ...>\"""))
-      0
+      2028
       iex> AOC2024.Day15.Part1.Solution.solution(Input.read_string_to_lines!(\"""
       ...>##########
       ...>#..O..O.O#
@@ -38,73 +38,71 @@ defmodule AOC2024.Day15.Part1.Solution do
       ...>^^>vv<^v^v<vv>^<><v<^v>^^^>>>^^vvv^>vvv<>>>^<^>>>>>^<<^v>^vvv<>^<><<v>
       ...>v^^>>><<^^<>>^v^<v^vv<>v^<<>^<^v^v><^<<<><<^<v><v<>vv>>v><v^<vv<>v^<<^
       ...>\"""))
-      0
+      10092
       iex> AOC2024.Day15.Part1.Solution.solution(Input.read_file_to_lines!("input.txt"))
-      0
+      1415498
 
   """
   def solution(input) do
-    map =
-      input
-      |> Enum.take_while(&String.starts_with?(&1, "#"))
-      |> Enum.with_index()
-      |> Enum.reduce([], fn {line, y}, acc ->
-        columns =
-          line
-          |> String.to_charlist()
-          |> Enum.map(&<<&1>>)
-          |> Enum.with_index()
-          |> Enum.reduce([], fn {tile, x}, col_acc ->
-            tile =
-              case tile do
-                "@" -> [%Tile{x: x, y: y, type: :robot, display: "@"}]
-                "#" -> [%Tile{x: x, y: y, type: :obstacle, display: "#"}]
-                "O" -> [%Tile{x: x, y: y, type: :box, display: "O"}]
-                "." -> []
-              end
-
-            tile ++ col_acc
-          end)
-
-        columns ++ acc
-      end)
-      |> Enum.reverse()
-      |> Enum.map(fn tile -> {{tile.x, tile.y}, tile} end)
-      |> Enum.into(%{})
-
-    map
-    |> Map.values()
-    |> Tile.print_tile_map()
-
-    moves =
-      input
-      |> Enum.filter(&(not String.starts_with?(&1, "#")))
-      |> Enum.reduce([], fn line, moves_acc ->
-        moves =
-          line
-          |> String.to_charlist()
-          |> Enum.map(&<<&1>>)
-          |> Enum.reduce([], fn move, moves_acc ->
-            [
-              case move do
-                ">" -> :right
-                "<" -> :left
-                "^" -> :up
-                "v" -> :down
-              end
-            ] ++ moves_acc
-          end)
-
-        moves ++ moves_acc
-      end)
-      |> Enum.reverse()
-      |> IO.inspect()
-
-    map = perform_moves(map, moves)
-
+    map = get_map(input)
     map |> Map.values() |> Tile.print_tile_map()
+    moves = get_moves(input)
+    map = perform_moves(map, moves)
+    map |> Map.values() |> Tile.print_tile_map()
+    calculate_box_coordinates(map) |> Enum.map(&elem(&1, 0)) |> Enum.sum()
+  end
 
-    0
+  def get_map(input) do
+    input
+    |> Enum.take_while(&String.starts_with?(&1, "#"))
+    |> Enum.with_index()
+    |> Enum.reduce([], fn {line, y}, acc ->
+      columns =
+        line
+        |> String.to_charlist()
+        |> Enum.map(&<<&1>>)
+        |> Enum.with_index()
+        |> Enum.reduce([], fn {tile, x}, col_acc ->
+          tile =
+            case tile do
+              "@" -> [%Tile{x: x, y: y, type: :robot, display: "@"}]
+              "#" -> [%Tile{x: x, y: y, type: :obstacle, display: "#"}]
+              "O" -> [%Tile{x: x, y: y, type: :box, display: "O"}]
+              "." -> []
+            end
+
+          tile ++ col_acc
+        end)
+
+      columns ++ acc
+    end)
+    |> Enum.reverse()
+    |> Enum.map(fn tile -> {{tile.x, tile.y}, tile} end)
+    |> Enum.into(%{})
+  end
+
+  def get_moves(input) do
+    input
+    |> Enum.filter(&(not String.starts_with?(&1, "#")))
+    |> Enum.reduce([], fn line, moves_acc ->
+      moves =
+        line
+        |> String.to_charlist()
+        |> Enum.map(&<<&1>>)
+        |> Enum.reduce([], fn move, moves_acc ->
+          [
+            case move do
+              ">" -> :right
+              "<" -> :left
+              "^" -> :up
+              "v" -> :down
+            end
+          ] ++ moves_acc
+        end)
+
+      moves ++ moves_acc
+    end)
+    |> Enum.reverse()
   end
 
   def perform_moves(map, moves) do
@@ -182,6 +180,14 @@ defmodule AOC2024.Day15.Part1.Solution do
         |> Map.delete({x, y})
 
       {acc_map, true}
+    end)
+  end
+
+  def calculate_box_coordinates(map) do
+    map
+    |> Map.filter(fn {_, tile} -> tile.type === :box end)
+    |> Enum.map(fn {_, tile} ->
+      {100 * tile.y + tile.x, tile}
     end)
   end
 end
