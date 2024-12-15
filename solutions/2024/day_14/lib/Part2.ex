@@ -5,28 +5,45 @@ defmodule AOC2024.Day14.Part2.Solution do
   ## Examples
 
       iex> AOC2024.Day14.Part2.Solution.solution(Common.read_file_to_lines!("input.txt"))
-      0
+      6243
 
   """
   def solution(input) do
-    robots =
-      input
-      |> parse_robots()
+    robots = input |> parse_robots()
 
-    for seconds <- Stream.iterate(1, &(&1 + 2)) do
-      robots = move_robots(robots, 101, 103, seconds)
+    Range.new(1, 10000)
+    |> Task.async_stream(
+      fn seconds ->
+        if rem(seconds, 1000) == 0, do: IO.puts("Generated frame for #{seconds} seconds")
 
-      grid_string =
         robots
+        |> move_robots(101, 103, seconds)
         |> Enum.map(&elem(&1, 0))
         |> print_grid(101, 103)
+      end,
+      max_concurrency: :erlang.system_info(:logical_processors_available) |> IO.inspect(),
+      timeout: :infinity
+    )
+    |> Enum.reduce_while({0, []}, fn
+      {:ok, grid_string}, {count, acc} ->
+        if String.contains?(grid_string, "RRRRRRRR") do
+          # Halt processing and keep the matched grid
+          {:halt, {count + 1, acc ++ [grid_string]}}
+        else
+          # Continue processing
+          {:cont, {count + 1, acc ++ [grid_string]}}
+        end
 
-      if String.contains?(grid_string, "RRRRRRRR") do
-        IO.puts(grid_string)
-        IO.puts("Found a match at #{seconds} seconds")
-        exit("found grid")
-      end
-    end
+      {:exit, _reason}, acc ->
+        {:cont, acc}
+    end)
+    |> tap(
+      &Enum.each(elem(&1, 1), fn grid ->
+        IO.puts(grid)
+        :timer.sleep(1)
+      end)
+    )
+    |> elem(0)
   end
 
   defp print_grid(robots, cols, rows) do
