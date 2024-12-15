@@ -2,7 +2,7 @@ defmodule AOC2024.Day13.Part1.Solution do
   @doc ~S"""
   ## Examples
 
-      iex> AOC2024.Day13.Part1.Solution.solution(Common.read_string_to_lines!(\"""
+      iex> AOC2024.Day13.Part1.Solution.solution(Input.read_string_to_lines!(\"""
       ...>Button A: X+94, Y+34
       ...>Button B: X+22, Y+67
       ...>Prize: X=8400, Y=5400
@@ -21,7 +21,7 @@ defmodule AOC2024.Day13.Part1.Solution do
       ...>
       ...>\"""))
       480
-      iex> AOC2024.Day13.Part1.Solution.solution(Common.read_file_to_lines!("input.txt"))
+      iex> AOC2024.Day13.Part1.Solution.solution(Input.read_file_to_lines!("input.txt"))
       37901
 
   """

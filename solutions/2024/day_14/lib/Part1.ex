@@ -2,7 +2,7 @@ defmodule AOC2024.Day14.Part1.Solution do
   @doc ~S"""
   ## Examples
 
-      iex> AOC2024.Day14.Part1.Solution.solution(Common.read_string_to_lines!(\"""
+      iex> AOC2024.Day14.Part1.Solution.solution(Input.read_string_to_lines!(\"""
       ...>p=0,4 v=3,-3
       ...>p=6,3 v=-1,-3
       ...>p=10,3 v=-1,2
@@ -18,7 +18,7 @@ defmodule AOC2024.Day14.Part1.Solution do
       ...>\"""), 100, 11, 7)
       12
 
-      iex> AOC2024.Day14.Part1.Solution.solution(Common.read_file_to_lines!("input.txt"), 100, 101, 103)
+      iex> AOC2024.Day14.Part1.Solution.solution(Input.read_file_to_lines!("input.txt"), 100, 101, 103)
       222901875
 
   """

@@ -89,7 +89,7 @@ defmodule Mix.Tasks.SetupDay do
       @doc ~S\"\"\"
       ## Examples
 
-          iex> AOC#{year_number}.Day#{day_number}.Part#{part_number}.Solution.solution(Common.read_file_to_lines!("input.txt"))
+          iex> AOC#{year_number}.Day#{day_number}.Part#{part_number}.Solution.solution(Input.read_file_to_lines!("input.txt"))
           0
 
       \"\"\"

@@ -1,6 +1,6 @@
-defmodule Common do
+defmodule Input do
   @moduledoc """
-  Documentation for `Common`.
+  Documentation for `Files`.
   """
 
   def read_file_to_lines!(path) do
