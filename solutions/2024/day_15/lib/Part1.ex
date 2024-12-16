@@ -68,7 +68,7 @@ defmodule AOC2024.Day15.Part1.Solution do
               "@" -> [%Tile{x: x, y: y, type: :robot, display: "@"}]
               "#" -> [%Tile{x: x, y: y, type: :obstacle, display: "#"}]
               "O" -> [%Tile{x: x, y: y, type: :box, display: "O"}]
-              "." -> []
+              "." -> [%Tile{x: x, y: y, type: :space, display: "."}]
             end
 
           tile ++ col_acc
@@ -161,6 +161,9 @@ defmodule AOC2024.Day15.Part1.Solution do
 
       %Tile{type: :obstacle} ->
         {map, false}
+
+      %Tile{type: :space} ->
+        move_boxes(map, positions |> Enum.map(&Map.get(map, &1)), dx, dy)
 
       nil ->
         move_boxes(map, positions |> Enum.map(&Map.get(map, &1)), dx, dy)
