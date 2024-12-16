@@ -39,11 +39,7 @@ defmodule AOC2024.Day15.Part2.Solution do
         |> Enum.reduce({0, []}, fn tiles, {x, col_acc} ->
           tiles =
             case tiles |> Enum.with_index() do
-              [{"@", _} | _tail] = robots ->
-                robots
-                |> Enum.map(fn {_, offset} ->
-                  %Tile{id: nil, x: x + offset, y: y, type: :robot, display: "@"}
-                end)
+              [{"@", _}] -> [%Tile{id: nil, x: x, y: y, type: :robot, display: "@"}]
 
               [{"#", _} | _tail] = obstacles ->
                 obstacles
