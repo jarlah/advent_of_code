@@ -20,7 +20,8 @@ defmodule AOC2024.Day15.MixProject do
   defp deps do
     [
       {:common, path: "../../common"},
-      {:mix_test_watch, "~> 1.0", only: [:dev, :test], runtime: false}
+      {:mix_test_watch, "~> 1.0", only: [:dev, :test], runtime: false},
+      { :uuid, "~> 1.1" }
     ]
   end
 end

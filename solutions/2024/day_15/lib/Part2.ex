@@ -7,9 +7,21 @@ defmodule AOC2024.Day15.Part2.Solution do
 
   """
   def solution(input) do
-    input
-    |> prepare_input()
-    |> get_map_p2()
+    grid_map =
+      input
+      |> prepare_input()
+      |> get_map_p2()
+
+    id_map =
+      grid_map
+      |> Map.filter(fn {_, tile} -> tile.id != nil end)
+      |> Enum.map(fn {_key, tile} -> {tile.id, tile} end)
+      |> Enum.into(%{})
+
+    # these will be different since the get_map_p2 function will chunk_by character and assign same id to every chunk
+    IO.puts("Length of map: #{map_size(grid_map)}, length of id map: #{map_size(id_map)}")
+
+    grid_map
     |> Map.values()
     |> Tile.print_tile_map(layout: :simple)
 
@@ -25,32 +37,40 @@ defmodule AOC2024.Day15.Part2.Solution do
         |> String.graphemes()
         |> Enum.chunk_by(& &1)
         |> Enum.reduce({0, []}, fn tiles, {x, col_acc} ->
-          id = uniq_id()
-
           tiles =
             case tiles |> Enum.with_index() do
               [{"@", _} | _tail] = robots ->
                 robots
                 |> Enum.map(fn {_, offset} ->
-                  %Tile{id: id, x: x + offset, y: y, type: :robot, display: "@"}
+                  %Tile{id: nil, x: x + offset, y: y, type: :robot, display: "@"}
                 end)
 
               [{"#", _} | _tail] = obstacles ->
                 obstacles
-                |> Enum.map(fn {_, offset} ->
-                  %Tile{id: id, x: x + offset, y: y, type: :obstacle, display: "#"}
+                |> Enum.chunk_every(2)
+                |> Enum.map(fn chunk ->
+                  id = UUID.uuid4()
+                  chunk |> Enum.map(fn {_, offset} ->
+                    %Tile{id: id, x: x + offset, y: y, type: :obstacle, display: "#"}
+                  end)
                 end)
+                |> List.flatten()
 
               [{"O", _} | _tail] = boxes ->
                 boxes
-                |> Enum.map(fn {_, offset} ->
-                  %Tile{id: id, x: x + offset, y: y, type: :box, display: "O"}
+                |> Enum.chunk_every(2)
+                |> Enum.map(fn chunk ->
+                  id = UUID.uuid4()
+                  chunk |> Enum.map(fn {_, offset} ->
+                    %Tile{id: id, x: x + offset, y: y, type: :box, display: "O"}
+                  end)
                 end)
+                |> List.flatten()
 
               [{".", _} | _tail] = boxes ->
                 boxes
                 |> Enum.map(fn {_, offset} ->
-                  %Tile{id: id, x: x + offset, y: y, type: :space, display: "."}
+                  %Tile{id: nil, x: x + offset, y: y, type: :space, display: "."}
                 end)
             end
 
@@ -74,6 +94,4 @@ defmodule AOC2024.Day15.Part2.Solution do
       |> String.replace(".", "..")
     end)
   end
-
-  defp uniq_id, do: to_string(:erlang.ref_to_list(:erlang.make_ref()))
 end
