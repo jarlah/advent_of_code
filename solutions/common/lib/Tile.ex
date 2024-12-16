@@ -1,14 +1,18 @@
 defmodule Tile do
   @type type :: :robot | :box | :obstacle
   @type t() :: %__MODULE__{
-          x: pos_integer(),
-          y: pos_integer(),
+          x: integer(),
+          y: integer(),
+          width: integer(),
+          height: integer(),
           type: type(),
           display: String.t()
         }
 
   defstruct x: nil,
             y: nil,
+            width: 1,
+            height: 1,
             type: nil,
             display: nil
 
