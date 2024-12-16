@@ -67,8 +67,8 @@ defmodule AOC2024.Day15.Part2.Solution do
                 end)
                 |> List.flatten()
 
-              [{".", _} | _tail] = boxes ->
-                boxes
+              [{".", _} | _tail] = spaces ->
+                spaces
                 |> Enum.map(fn {_, offset} ->
                   %Tile{id: nil, x: x + offset, y: y, type: :space, display: "."}
                 end)
