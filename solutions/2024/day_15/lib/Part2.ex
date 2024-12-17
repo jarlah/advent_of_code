@@ -59,9 +59,10 @@ defmodule AOC2024.Day15.Part2.Solution do
                 |> Enum.with_index()
                 |> Enum.chunk_every(2)
                 |> Enum.map(fn chunk ->
+                  id = UUID.uuid4()
                   chunk
                   |> Enum.map(fn {_, offset} ->
-                    %Tile{id: UUID.uuid4(), x: x + offset, y: y, type: :box, display: "O"}
+                    %Tile{id: id, x: x + offset, y: y, type: :box, display: "O"}
                   end)
                 end)
                 |> List.flatten()
