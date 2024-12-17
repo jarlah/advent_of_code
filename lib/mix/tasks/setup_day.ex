@@ -20,7 +20,9 @@ defmodule Mix.Tasks.SetupDay do
     defmodule AOC#{year_number}.Day#{day_number}.DocTest do
       use ExUnit.Case
 
+      @tag :part1
       doctest AOC#{year_number}.Day#{day_number}.Part1.Solution
+      @tag :part2
       doctest AOC#{year_number}.Day#{day_number}.Part2.Solution
     end
     """
