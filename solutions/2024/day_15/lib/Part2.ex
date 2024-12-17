@@ -39,19 +39,22 @@ defmodule AOC2024.Day15.Part2.Solution do
         |> String.graphemes()
         |> Enum.chunk_by(& &1)
         |> Enum.reduce({0, []}, fn tiles, {x, col_acc} ->
+          IO.inspect("X: #{x}, Y: #{y}")
           tiles =
-            case tiles |> Enum.with_index() do
-              [{"@", _}] ->
+            case tiles do
+              ["@"] ->
                 [%Tile{id: nil, x: x, y: y, type: :robot, display: "@"}]
 
-              [{"#", _} | _tail] = obstacles ->
+              ["#" | _tail] = obstacles ->
                 obstacles
+                |> Enum.with_index()
                 |> Enum.map(fn {_, offset} ->
                   %Tile{id: nil, x: x + offset, y: y, type: :obstacle, display: "#"}
                 end)
 
-              [{"O", _} | _tail] = boxes ->
+              ["O" | _tail] = boxes ->
                 boxes
+                |> Enum.with_index()
                 |> Enum.chunk_every(2)
                 |> Enum.map(fn chunk ->
                   chunk
@@ -61,8 +64,9 @@ defmodule AOC2024.Day15.Part2.Solution do
                 end)
                 |> List.flatten()
 
-              [{".", _} | _tail] = spaces ->
+              ["." | _tail] = spaces ->
                 spaces
+                |> Enum.with_index()
                 |> Enum.map(fn {_, offset} ->
                   %Tile{id: nil, x: x + offset, y: y, type: :space, display: "."}
                 end)
