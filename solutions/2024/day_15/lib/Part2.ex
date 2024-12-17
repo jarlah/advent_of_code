@@ -15,7 +15,10 @@ defmodule AOC2024.Day15.Part2.Solution do
     box_id_map =
       grid_map
       |> Map.filter(fn {_, tile} -> tile.id != nil end)
-      |> Enum.map(fn {_key, tile} -> {tile.id, tile} end)
+      |> Enum.chunk_by(fn {_, tile} -> tile.id end)
+      |> Enum.map(fn [{_, tile} | _tail] = chunk ->
+        {tile.id, Enum.map(chunk, fn {_, tile} -> tile end)}
+      end)
       |> Enum.into(%{})
 
     # these will be different since the get_map_p2 function will chunk_by character and assign same id to every chunk
@@ -39,7 +42,6 @@ defmodule AOC2024.Day15.Part2.Solution do
         |> String.graphemes()
         |> Enum.chunk_by(& &1)
         |> Enum.reduce({0, []}, fn tiles, {x, col_acc} ->
-          IO.inspect("X: #{x}, Y: #{y}")
           tiles =
             case tiles do
               ["@"] ->
