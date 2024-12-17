@@ -12,14 +12,16 @@ defmodule AOC2024.Day15.Part2.Solution do
       |> prepare_input()
       |> get_map_p2()
 
-    id_map =
+    box_id_map =
       grid_map
       |> Map.filter(fn {_, tile} -> tile.id != nil end)
       |> Enum.map(fn {_key, tile} -> {tile.id, tile} end)
       |> Enum.into(%{})
 
     # these will be different since the get_map_p2 function will chunk_by character and assign same id to every chunk
-    IO.puts("Length of map: #{map_size(grid_map)}, length of id map: #{map_size(id_map)}")
+    IO.puts(
+      "Number of tiles on map: #{map_size(grid_map)}, number of unique boxes: #{map_size(box_id_map)}"
+    )
 
     grid_map
     |> Map.values()
