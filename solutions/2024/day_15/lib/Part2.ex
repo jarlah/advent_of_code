@@ -39,26 +39,22 @@ defmodule AOC2024.Day15.Part2.Solution do
         |> Enum.reduce({0, []}, fn tiles, {x, col_acc} ->
           tiles =
             case tiles |> Enum.with_index() do
-              [{"@", _}] -> [%Tile{id: nil, x: x, y: y, type: :robot, display: "@"}]
+              [{"@", _}] ->
+                [%Tile{id: nil, x: x, y: y, type: :robot, display: "@"}]
 
               [{"#", _} | _tail] = obstacles ->
                 obstacles
-                |> Enum.chunk_every(2)
-                |> Enum.map(fn chunk ->
-                  id = UUID.uuid4()
-                  chunk |> Enum.map(fn {_, offset} ->
-                    %Tile{id: id, x: x + offset, y: y, type: :obstacle, display: "#"}
-                  end)
+                |> Enum.map(fn {_, offset} ->
+                  %Tile{id: nil, x: x + offset, y: y, type: :obstacle, display: "#"}
                 end)
-                |> List.flatten()
 
               [{"O", _} | _tail] = boxes ->
                 boxes
                 |> Enum.chunk_every(2)
                 |> Enum.map(fn chunk ->
-                  id = UUID.uuid4()
-                  chunk |> Enum.map(fn {_, offset} ->
-                    %Tile{id: id, x: x + offset, y: y, type: :box, display: "O"}
+                  chunk
+                  |> Enum.map(fn {_, offset} ->
+                    %Tile{id: UUID.uuid4(), x: x + offset, y: y, type: :box, display: "O"}
                   end)
                 end)
                 |> List.flatten()
