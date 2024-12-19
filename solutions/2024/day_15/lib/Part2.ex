@@ -4,28 +4,63 @@ defmodule AOC2024.Day15.Part2.Solution do
   @doc ~S"""
   ## Examples
 
+      #iex> AOC2024.Day15.Part2.Solution.solution(Input.read_string_to_lines!(\"""
+      #...>########
+      #...>#..O..##
+      #...>#...O..#
+      #...>#...O..#
+      #...>#.@....#
+      #...>########
+      #...>
+      #...>^>>>><^><<<^>>>>>
+      #...>\"""))
+      #iex> AOC2024.Day15.Part2.Solution.solution(Input.read_string_to_lines!(\"""
+      #...>######
+      #...>#...##
+      #...>#O.O.#
+      #...>#.O..#
+      #...>#.@..#
+      #...>######
+      #...>
+      #...>^<^^
+      #...>\"""))
+      #iex> AOC2024.Day15.Part2.Solution.solution(Input.read_string_to_lines!(\"""
+      #...>#######
+      #...>#...#.#
+      #...>#.....#
+      #...>#..OO@#
+      #...>#..O..#
+      #...>#.....#
+      #...>#######
+      #...><vv<<^^<<^^
+      #...>\"""))
+      #618
       iex> AOC2024.Day15.Part2.Solution.solution(Input.read_string_to_lines!(\"""
-      ...>########
-      ...>#..O..##
-      ...>#...O..#
-      ...>#...O..#
-      ...>#.@....#
-      ...>########
-      ...>
-      ...>^>>>><^><<<^>>>>>
+      ...>##########
+      ...>#..O..O.O#
+      ...>#......O.#
+      ...>#.OO..O.O#
+      ...>#..O@..O.#
+      ...>#O#..O...#
+      ...>#O..O..O.#
+      ...>#.OO.O.OO#
+      ...>#....O...#
+      ...>##########
+      ...><vv>^<v^>v>^vv^v>v<>v^v<v<^vv<<<^><<><>>v<vvv<>^v^>^<<<><<v<<<v^vv^v>^
+      ...>vvv<<^>^v^^><<>>><>^<<><^vv^^<>vvv<>><^^v>^>vv<>v<<<<v<^v>^<^^>>>^<v<v
+      ...>><>vv>v^v^<>><>>>><^^>vv>v<^^^>>v^v^<^^>v^^>v^<^v>v<>>v^v^<v>v^^<^^vv<
+      ...><<v<^>>^^^^>>>v^<>vvv^><v<<<>^^^vv^<vvv>^>v<^^^^v<>^>vvvv><>>v^<<^^^^^
+      ...>^><^><>>><>^^<<^^v>>><^<v>^<vv>>v>>>^v><>^v><<<<v>>v<v<v>vvv>^<><<>^><
+      ...>^>><>^v<><^vvv<^^<><v<<<<<><^v<<<><<<^^<v<^^^><^>>^<v^><<<^>>^v<v^v<v^
+      ...>>^>>^v>vv>^<<^v<>><<><<v<<v><>v<^vv<<<>^^v^>^^>>><<^v>>v^v><^^>>^<>vv^
+      ...><><^^>^^^<><vvvvv^v<v<<>^v<v>v<<^><<><<><<<^^<<<^<<>><<><^^^>^^<>^>v<>
+      ...>^^>vv<^v^v<vv>^<><v<^v>^^^>>>^^vvv^>vvv<>>>^<^>>>>>^<<^v>^vvv<>^<><<v>
+      ...>v^^>>><<^^<>>^v^<v^vv<>v^<<>^<^v^v><^<<<><<^<v><v<>vv>>v><v^<vv<>v^<<^
       ...>\"""))
-      iex> AOC2024.Day15.Part2.Solution.solution(Input.read_string_to_lines!(\"""
-      ...>######
-      ...>#...##
-      ...>#O.O.#
-      ...>#.O..#
-      ...>#.@..#
-      ...>######
-      ...>
-      ...>^<^^
-      ...>\"""))
-      iex> AOC2024.Day15.Part2.Solution.solution(Input.read_file_to_lines!("input.txt"))
       0
+
+      #iex> AOC2024.Day15.Part2.Solution.solution(Input.read_file_to_lines!("input.txt"))
+      #0
 
   """
   def solution(input) do
@@ -38,71 +73,37 @@ defmodule AOC2024.Day15.Part2.Solution do
       input
       |> get_moves()
 
-    perform_moves(grid_map, moves)
-
-    0
-  end
-
-  def get_map_p2(input) do
-    input
-    |> Enum.take_while(&String.starts_with?(&1, "#"))
-    |> Enum.reduce({0, []}, fn line, {y, acc} ->
-      columns =
-        line
-        |> String.graphemes()
-        |> Enum.chunk_by(& &1)
-        |> Enum.reduce({0, []}, fn tiles, {x, col_acc} ->
-          tiles =
-            case tiles do
-              ["@"] ->
-                [%Tile{id: nil, x: x, y: y, type: :robot, display: "@"}]
-
-              ["#" | _tail] = obstacles ->
-                obstacles
-                |> Enum.with_index()
-                |> Enum.map(fn {_, offset} ->
-                  %Tile{id: nil, x: x + offset, y: y, type: :obstacle, display: "#"}
-                end)
-
-              ["O" | _tail] = boxes ->
-                boxes
-                |> Enum.with_index()
-                |> Enum.chunk_every(2)
-                |> Enum.map(fn chunk ->
-                  id = UUID.uuid4()
-
-                  chunk
-                  |> Enum.map(fn {_, offset} ->
-                    %Tile{id: id, x: x + offset, y: y, type: :box, display: "O"}
-                  end)
-                end)
-                |> List.flatten()
-
-              ["." | _tail] = spaces ->
-                spaces
-                |> Enum.with_index()
-                |> Enum.map(fn {_, offset} ->
-                  %Tile{id: nil, x: x + offset, y: y, type: :space, display: "."}
-                end)
-            end
-
-          {x + length(tiles), tiles ++ col_acc}
-        end)
-
-      {y + 1, elem(columns, 1) ++ acc}
-    end)
-    |> elem(1)
-    |> Enum.reverse()
-    |> Enum.map(fn tile -> {{tile.x, tile.y}, tile} end)
-    |> Enum.into(%{})
-  end
-
-  def perform_moves(grid_map, moves) do
     robot = Enum.find(grid_map, &(elem(&1, 1).type === :robot)) |> elem(1)
-    perform_moves(grid_map, moves, robot)
+
+    grid_map
+    |> Map.values()
+    |> Tile.print_tile_map(layout: :simple)
+
+    grid_map
+    |> perform_moves(moves, robot)
+    |> calculate_box_coordinates()
+    |> Enum.map(&elem(&1, 0))
+    |> Enum.sum()
   end
 
-  def perform_moves(map, [], _robot), do: map
+  def calculate_box_coordinates(map) do
+    map
+    |> Enum.filter(fn {_, tile} -> tile.type === :box end)
+    |> Enum.group_by(fn {_, tile} -> tile.id end)
+    |> Enum.map(fn {_, tiles} ->
+      tiles = Enum.sort_by(tiles, fn {_, tile} -> tile.x end)
+      [{_, tile} | _tail] = tiles
+      {100 * tile.y + tile.x, tile}
+    end)
+  end
+
+  def perform_moves(map, [], _robot) do
+    map
+    |> Map.values()
+    |> Tile.print_tile_map(layout: :simple)
+
+    map
+  end
 
   def perform_moves(map, [move | rest_moves], %Tile{x: robot_x, y: robot_y} = robot) do
     {dx, dy} =
@@ -115,9 +116,9 @@ defmodule AOC2024.Day15.Part2.Solution do
 
     next_robot = Tile.move(robot, dx, dy)
 
-    # map
-    # |> Map.values()
-    # |> Tile.print_tile_map(layout: :simple)
+    map
+    |> Map.values()
+    |> Tile.print_tile_map(layout: :simple)
 
     case Map.get(map, {next_robot.x, next_robot.y}) do
       %Tile{type: :box} ->
@@ -134,7 +135,7 @@ defmodule AOC2024.Day15.Part2.Solution do
         # do nothing, continue
         perform_moves(map, rest_moves, robot)
 
-      _ ->
+      _other ->
         # there are no box or no obstacle, just move the robot
         perform_moves(
           move_tile(map, robot, dx, dy),
@@ -156,12 +157,38 @@ defmodule AOC2024.Day15.Part2.Solution do
         boxes_with_id =
           Enum.filter(map, fn {_pos, tile} -> tile.id == box_id end) |> Enum.map(&elem(&1, 1))
 
-        new_tiles =
-          Enum.reduce(boxes_with_id, tiles, fn tile, tiles_acc ->
-            Map.put(tiles_acc, {tile.x, tile.y}, tile)
+        # Check if any part of the composite box has an obstacle in front of it
+        # and collect new composite boxes hit
+        {can_move, additional_boxes} =
+          Enum.reduce(boxes_with_id, {true, []}, fn tile, {can_move_acc, additional_boxes_acc} ->
+            next_pos = {tile.x + dx, tile.y + dy}
+
+            case Map.get(map, next_pos) do
+              %Tile{type: :obstacle} ->
+                {false, additional_boxes_acc}
+
+              %Tile{type: :box, id: new_box_id} when new_box_id != box_id ->
+                new_boxes =
+                  Enum.filter(map, fn {_pos, t} -> t.id == new_box_id end)
+                  |> Enum.map(&elem(&1, 1))
+
+                {can_move_acc, additional_boxes_acc ++ new_boxes}
+
+              _ ->
+                {can_move_acc, additional_boxes_acc}
+            end
           end)
 
-        push_boxes(map, x + dx, y + dy, dx, dy, new_tiles)
+        if can_move do
+          new_tiles =
+            Enum.reduce(boxes_with_id ++ additional_boxes, tiles, fn tile, tiles_acc ->
+              Map.put(tiles_acc, {tile.x, tile.y}, tile)
+            end)
+
+          push_boxes(map, x + dx, y + dy, dx, dy, new_tiles)
+        else
+          {map, false}
+        end
 
       %Tile{type: :obstacle} ->
         {map, false}
@@ -234,5 +261,65 @@ defmodule AOC2024.Day15.Part2.Solution do
       |> String.replace(".", "..")
       |> String.replace("@", "@.")
     end)
+  end
+
+  def get_map_p2(input) do
+    input
+    |> Enum.take_while(&String.starts_with?(&1, "#"))
+    |> Enum.reduce({0, []}, fn line, {y, acc} ->
+      columns =
+        line
+        |> String.graphemes()
+        |> Enum.chunk_by(& &1)
+        |> Enum.reduce({0, []}, fn tiles, {x, col_acc} ->
+          tiles =
+            case tiles do
+              ["@"] ->
+                [%Tile{id: nil, x: x, y: y, type: :robot, display: "@"}]
+
+              ["#" | _tail] = obstacles ->
+                obstacles
+                |> Enum.with_index()
+                |> Enum.map(fn {_, offset} ->
+                  %Tile{id: nil, x: x + offset, y: y, type: :obstacle, display: "#"}
+                end)
+
+              ["O" | _tail] = boxes ->
+                boxes
+                |> Enum.with_index()
+                |> Enum.chunk_every(2)
+                |> Enum.map(fn chunk ->
+                  id = UUID.uuid4()
+
+                  chunk
+                  |> Enum.map(fn {_, offset} ->
+                    %Tile{
+                      id: id,
+                      x: x + offset,
+                      y: y,
+                      type: :box,
+                      display: if(rem(offset, 2) == 0, do: "[", else: "]")
+                    }
+                  end)
+                end)
+                |> List.flatten()
+
+              ["." | _tail] = spaces ->
+                spaces
+                |> Enum.with_index()
+                |> Enum.map(fn {_, offset} ->
+                  %Tile{id: nil, x: x + offset, y: y, type: :space, display: "."}
+                end)
+            end
+
+          {x + length(tiles), tiles ++ col_acc}
+        end)
+
+      {y + 1, elem(columns, 1) ++ acc}
+    end)
+    |> elem(1)
+    |> Enum.reverse()
+    |> Enum.map(fn tile -> {{tile.x, tile.y}, tile} end)
+    |> Enum.into(%{})
   end
 end
