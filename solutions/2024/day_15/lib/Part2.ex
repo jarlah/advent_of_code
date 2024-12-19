@@ -12,7 +12,7 @@ defmodule AOC2024.Day15.Part2.Solution do
       ...>#.@....#
       ...>########
       ...>
-      ...>^>>>><^><<<^>>
+      ...>^>>>><^><<<^>>>>>
       ...>\"""))
       iex> AOC2024.Day15.Part2.Solution.solution(Input.read_string_to_lines!(\"""
       ...>######
@@ -24,9 +24,8 @@ defmodule AOC2024.Day15.Part2.Solution do
       ...>
       ...>^<^^
       ...>\"""))
-
-      #iex> AOC2024.Day15.Part2.Solution.solution(Input.read_file_to_lines!("input.txt"))
-      #0
+      iex> AOC2024.Day15.Part2.Solution.solution(Input.read_file_to_lines!("input.txt"))
+      0
 
   """
   def solution(input) do
@@ -35,20 +34,11 @@ defmodule AOC2024.Day15.Part2.Solution do
       |> prepare_input()
       |> get_map_p2()
 
-    box_id_map =
-      grid_map
-      |> Map.filter(fn {_, tile} -> tile.id != nil end)
-      |> Enum.group_by(fn {_, tile} -> tile.id end)
-      |> Enum.map(fn {_id, [{_, tile} | _tail] = chunk} ->
-        {tile.id, Enum.map(chunk, fn {_, tile} -> tile end)}
-      end)
-      |> Enum.into(%{})
-
     moves =
       input
       |> get_moves()
 
-    perform_moves(grid_map, box_id_map, moves)
+    perform_moves(grid_map, moves)
 
     0
   end
@@ -80,6 +70,7 @@ defmodule AOC2024.Day15.Part2.Solution do
                 |> Enum.chunk_every(2)
                 |> Enum.map(fn chunk ->
                   id = UUID.uuid4()
+
                   chunk
                   |> Enum.map(fn {_, offset} ->
                     %Tile{id: id, x: x + offset, y: y, type: :box, display: "O"}
@@ -106,14 +97,14 @@ defmodule AOC2024.Day15.Part2.Solution do
     |> Enum.into(%{})
   end
 
-  def perform_moves(grid_map, box_id_map, moves) do
+  def perform_moves(grid_map, moves) do
     robot = Enum.find(grid_map, &(elem(&1, 1).type === :robot)) |> elem(1)
-    perform_moves(grid_map, box_id_map, moves, robot)
+    perform_moves(grid_map, moves, robot)
   end
 
-  def perform_moves(map, _box_id_map, [], _robot), do: map
+  def perform_moves(map, [], _robot), do: map
 
-  def perform_moves(map, box_id_map, [move | rest_moves], %Tile{x: robot_x, y: robot_y} = robot) do
+  def perform_moves(map, [move | rest_moves], %Tile{x: robot_x, y: robot_y} = robot) do
     {dx, dy} =
       case move do
         :right -> {1, 0}
@@ -124,47 +115,53 @@ defmodule AOC2024.Day15.Part2.Solution do
 
     next_robot = Tile.move(robot, dx, dy)
 
-    map
-    |> Map.values()
-    |> Tile.print_tile_map(layout: :simple)
+    # map
+    # |> Map.values()
+    # |> Tile.print_tile_map(layout: :simple)
 
     case Map.get(map, {next_robot.x, next_robot.y}) do
       %Tile{type: :box} ->
         # lets try to push the robot and the boxes in front of it
-        {updated_map, can_move} = push_boxes(map, box_id_map, robot_x, robot_y, dx, dy)
+        {updated_map, can_move} = push_boxes(map, robot_x, robot_y, dx, dy)
 
         if can_move do
-          perform_moves(updated_map, box_id_map, rest_moves, next_robot)
+          perform_moves(updated_map, rest_moves, Tile.move(robot, dx, dy))
         else
-          perform_moves(map, box_id_map, rest_moves, robot)
+          perform_moves(map, rest_moves, robot)
         end
 
       %Tile{type: :obstacle} ->
         # do nothing, continue
-        perform_moves(map, box_id_map, rest_moves, robot)
+        perform_moves(map, rest_moves, robot)
 
       _ ->
         # there are no box or no obstacle, just move the robot
         perform_moves(
-          map
-          |> Map.put({next_robot.x, next_robot.y}, next_robot)
-          |> Map.delete({robot_x, robot_y}),
-          box_id_map,
+          move_tile(map, robot, dx, dy),
           rest_moves,
-          next_robot
+          Tile.move(robot, dx, dy)
         )
     end
   end
 
-  def push_boxes(map, box_id_map, robot_x, robot_y, dx, dy) do
-    push_boxes(map, box_id_map, robot_x + dx, robot_y + dy, dx, dy, %{{robot_x, robot_y} => Map.get(map, {robot_x, robot_y})})
+  def push_boxes(map, robot_x, robot_y, dx, dy) do
+    push_boxes(map, robot_x + dx, robot_y + dy, dx, dy, %{
+      {robot_x, robot_y} => Map.get(map, {robot_x, robot_y})
+    })
   end
 
-  def push_boxes(map, box_id_map, x, y, dx, dy, tiles) do
+  def push_boxes(map, x, y, dx, dy, tiles) do
     case Map.get(map, {x, y}) do
       %Tile{id: box_id, type: :box} ->
-        new_tiles = Map.get(box_id_map, box_id, []) |> Enum.reduce(tiles, fn tile, acc -> Map.put(acc, {tile.x, tile.y}, tile) end)
-        push_boxes(map, box_id_map, x + dx, y + dy, dx, dy, new_tiles)
+        boxes_with_id =
+          Enum.filter(map, fn {_pos, tile} -> tile.id == box_id end) |> Enum.map(&elem(&1, 1))
+
+        new_tiles =
+          Enum.reduce(boxes_with_id, tiles, fn tile, tiles_acc ->
+            Map.put(tiles_acc, {tile.x, tile.y}, tile)
+          end)
+
+        push_boxes(map, x + dx, y + dy, dx, dy, new_tiles)
 
       %Tile{type: :obstacle} ->
         {map, false}
@@ -182,34 +179,30 @@ defmodule AOC2024.Day15.Part2.Solution do
     sorted_tiles = sort_tiles(tiles |> Map.values(), dx, dy)
 
     # Simulate the move
-    {can_move, _} = Enum.reduce(sorted_tiles, {true, map}, fn %Tile{x: x, y: y} = tile, {can_move, sim_map} ->
-      if can_move do
-        new_pos = {x + dx, y + dy}
-        case Map.get(sim_map, new_pos) do
-          %Tile{type: :space} ->
-            {true, move_tile(sim_map, tile, dx, dy)}
-          nil ->
-            {true, move_tile(sim_map, tile, dx, dy)}
-          _ ->
-            {false, sim_map}
+    {_, can_move} =
+      Enum.reduce(sorted_tiles, {map, true}, fn %Tile{x: x, y: y} = tile, {sim_map, can_move} ->
+        if can_move do
+          new_pos = {x + dx, y + dy}
+
+          case Map.get(sim_map, new_pos) do
+            %Tile{type: :space} ->
+              {move_tile(sim_map, tile, dx, dy), true}
+
+            nil ->
+              {move_tile(sim_map, tile, dx, dy), true}
+
+            _ ->
+              {sim_map, false}
+          end
+        else
+          {sim_map, false}
         end
-      else
-        {false, sim_map}
-      end
-    end)
+      end)
 
     if can_move do
       # If all boxes can be moved, perform the actual move
-      Enum.reduce(sorted_tiles, {map, true}, fn %Tile{x: x, y: y}, {acc_map, _} ->
-        tile = Map.get(acc_map, {x, y})
-        new_pos = {x + dx, y + dy}
-
-        acc_map =
-          acc_map
-          |> Map.put(new_pos, Tile.move(tile, dx, dy))
-          |> Map.delete({x, y})
-
-        {acc_map, true}
+      Enum.reduce(sorted_tiles, {map, true}, fn %Tile{} = tile, {acc_map, _} ->
+        {move_tile(acc_map, tile, dx, dy), true}
       end)
     else
       {map, false}
