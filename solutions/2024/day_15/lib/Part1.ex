@@ -44,7 +44,7 @@ defmodule AOC2024.Day15.Part1.Solution do
 
   """
   def solution(input) do
-    map = get_map(input)
+    map = get_map_p1(input)
     map |> Map.values() |> Tile.print_tile_map()
     moves = get_moves(input)
     map = perform_moves(map, moves)
@@ -52,7 +52,7 @@ defmodule AOC2024.Day15.Part1.Solution do
     calculate_box_coordinates(map) |> Enum.map(&elem(&1, 0)) |> Enum.sum()
   end
 
-  def get_map(input) do
+  def get_map_p1(input) do
     input
     |> Enum.take_while(&String.starts_with?(&1, "#"))
     |> Enum.with_index()
