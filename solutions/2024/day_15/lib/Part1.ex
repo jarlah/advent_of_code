@@ -44,41 +44,27 @@ defmodule AOC2024.Day15.Part1.Solution do
 
   """
   def solution(input) do
-    map = get_map_p1(input)
-    map |> Map.values() |> Tile.print_tile_map()
-    moves = get_moves(input)
-    map = perform_moves(map, moves)
-    map |> Map.values() |> Tile.print_tile_map()
-    calculate_box_coordinates(map) |> Enum.map(&elem(&1, 0)) |> Enum.sum()
-  end
+    map =
+      input
+      |> Tile.parse_map()
+      |> Enum.map(fn {pos, tile} ->
+        case tile.display do
+          "@" -> {pos, %Tile{tile | type: :robot}}
+          "#" -> {pos, %Tile{tile | type: :obstacle}}
+          "O" -> {pos, %Tile{tile | type: :box}}
+          "." -> {pos, %Tile{tile | type: :space}}
+        end
+      end)
+      |> Enum.into(%{})
+      |> tap(&Map.values(&1) |> Tile.print_tile_map())
 
-  def get_map_p1(input) do
     input
-    |> Enum.take_while(&String.starts_with?(&1, "#"))
-    |> Enum.with_index()
-    |> Enum.reduce([], fn {line, y}, acc ->
-      columns =
-        line
-        |> String.to_charlist()
-        |> Enum.map(&<<&1>>)
-        |> Enum.with_index()
-        |> Enum.reduce([], fn {tile, x}, col_acc ->
-          tile =
-            case tile do
-              "@" -> [%Tile{x: x, y: y, type: :robot, display: "@"}]
-              "#" -> [%Tile{x: x, y: y, type: :obstacle, display: "#"}]
-              "O" -> [%Tile{x: x, y: y, type: :box, display: "O"}]
-              "." -> [%Tile{x: x, y: y, type: :space, display: "."}]
-            end
-
-          tile ++ col_acc
-        end)
-
-      columns ++ acc
-    end)
-    |> Enum.reverse()
-    |> Enum.map(fn tile -> {{tile.x, tile.y}, tile} end)
-    |> Enum.into(%{})
+    |> get_moves()
+    |> then(&perform_moves(map, &1))
+    |> tap(&Map.values(&1) |> Tile.print_tile_map())
+    |> calculate_box_coordinates()
+    |> Enum.map(&elem(&1, 0))
+    |> Enum.sum()
   end
 
   def get_moves(input) do

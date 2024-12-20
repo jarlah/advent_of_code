@@ -87,4 +87,26 @@ defmodule Tile do
 
     map
   end
+
+  @spec parse_map(list(String.t())) :: map()
+  def parse_map(input) do
+    input
+    |> Enum.take_while(&String.starts_with?(&1, "#"))
+    |> Enum.with_index()
+    |> Enum.reduce([], fn {line, y}, acc ->
+      columns =
+        line
+        |> String.to_charlist()
+        |> Enum.map(&<<&1>>)
+        |> Enum.with_index()
+        |> Enum.map(fn {tile, x} ->
+          %Tile{x: x, y: y, type: :default, display: tile}
+        end)
+
+      columns ++ acc
+    end)
+    |> Enum.reverse()
+    |> Enum.map(fn tile -> {{tile.x, tile.y}, tile} end)
+    |> Enum.into(%{})
+  end
 end
