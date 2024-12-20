@@ -4,37 +4,39 @@ defmodule AOC2024.Day15.Part2.Solution do
   @doc ~S"""
   ## Examples
 
-      #iex> AOC2024.Day15.Part2.Solution.solution(Input.read_string_to_lines!(\"""
-      #...>########
-      #...>#..O..##
-      #...>#...O..#
-      #...>#...O..#
-      #...>#.@....#
-      #...>########
-      #...>
-      #...>^>>>><^><<<^>>>>>
-      #...>\"""))
-      #iex> AOC2024.Day15.Part2.Solution.solution(Input.read_string_to_lines!(\"""
-      #...>######
-      #...>#...##
-      #...>#O.O.#
-      #...>#.O..#
-      #...>#.@..#
-      #...>######
-      #...>
-      #...>^<^^
-      #...>\"""))
-      #iex> AOC2024.Day15.Part2.Solution.solution(Input.read_string_to_lines!(\"""
-      #...>#######
-      #...>#...#.#
-      #...>#.....#
-      #...>#..OO@#
-      #...>#..O..#
-      #...>#.....#
-      #...>#######
-      #...><vv<<^^<<^^
-      #...>\"""))
-      #618
+      iex> AOC2024.Day15.Part2.Solution.solution(Input.read_string_to_lines!(\"""
+      ...>########
+      ...>#..O..##
+      ...>#...O..#
+      ...>#...O..#
+      ...>#.@....#
+      ...>########
+      ...>
+      ...>^>>>><^><<<^>>>>>
+      ...>\"""))
+      628
+      iex> AOC2024.Day15.Part2.Solution.solution(Input.read_string_to_lines!(\"""
+      ...>######
+      ...>#...##
+      ...>#O.O.#
+      ...>#.O..#
+      ...>#.@..#
+      ...>######
+      ...>
+      ...>^<^^
+      ...>\"""))
+      512
+      iex> AOC2024.Day15.Part2.Solution.solution(Input.read_string_to_lines!(\"""
+      ...>#######
+      ...>#...#.#
+      ...>#.....#
+      ...>#..OO@#
+      ...>#..O..#
+      ...>#.....#
+      ...>#######
+      ...><vv<<^^<<^^
+      ...>\"""))
+      618
       iex> AOC2024.Day15.Part2.Solution.solution(Input.read_string_to_lines!(\"""
       ...>##########
       ...>#..O..O.O#
@@ -57,10 +59,9 @@ defmodule AOC2024.Day15.Part2.Solution do
       ...>^^>vv<^v^v<vv>^<><v<^v>^^^>>>^^vvv^>vvv<>>>^<^>>>>>^<<^v>^vvv<>^<><<v>
       ...>v^^>>><<^^<>>^v^<v^vv<>v^<<>^<^v^v><^<<<><<^<v><v<>vv>>v><v^<vv<>v^<<^
       ...>\"""))
-      0
-
-      #iex> AOC2024.Day15.Part2.Solution.solution(Input.read_file_to_lines!("input.txt"))
-      #0
+      9021
+      iex> AOC2024.Day15.Part2.Solution.solution(Input.read_file_to_lines!("input.txt"))
+      1432898
 
   """
   def solution(input) do
@@ -116,9 +117,9 @@ defmodule AOC2024.Day15.Part2.Solution do
 
     next_robot = Tile.move(robot, dx, dy)
 
-    map
-    |> Map.values()
-    |> Tile.print_tile_map(layout: :simple)
+    # map
+    # |> Map.values()
+    # |> Tile.print_tile_map(layout: :simple)
 
     case Map.get(map, {next_robot.x, next_robot.y}) do
       %Tile{type: :box} ->
