@@ -154,34 +154,13 @@ defmodule AOC2024.Day15.Part2.Solution do
   def push_boxes(map, x, y, dx, dy, tiles) do
     case Map.get(map, {x, y}) do
       %Tile{id: box_id, type: :box} ->
-        boxes_with_id =
-          Enum.filter(map, fn {_pos, tile} -> tile.id == box_id end) |> Enum.map(&elem(&1, 1))
+        boxes_with_id = get_boxes_with_id(map, box_id)
 
-        # Check if any part of the composite box has an obstacle in front of it
-        # and collect new composite boxes hit
-        {can_move, additional_boxes} =
-          Enum.reduce(boxes_with_id, {true, []}, fn tile, {can_move_acc, additional_boxes_acc} ->
-            next_pos = {tile.x + dx, tile.y + dy}
-
-            case Map.get(map, next_pos) do
-              %Tile{type: :obstacle} ->
-                {false, additional_boxes_acc}
-
-              %Tile{type: :box, id: new_box_id} when new_box_id != box_id ->
-                new_boxes =
-                  Enum.filter(map, fn {_pos, t} -> t.id == new_box_id end)
-                  |> Enum.map(&elem(&1, 1))
-
-                {can_move_acc, additional_boxes_acc ++ new_boxes}
-
-              _ ->
-                {can_move_acc, additional_boxes_acc}
-            end
-          end)
+        {can_move, all_boxes} = check_boxes_recursively(map, boxes_with_id, dx, dy, [])
 
         if can_move do
           new_tiles =
-            Enum.reduce(boxes_with_id ++ additional_boxes, tiles, fn tile, tiles_acc ->
+            Enum.reduce(all_boxes, tiles, fn tile, tiles_acc ->
               Map.put(tiles_acc, {tile.x, tile.y}, tile)
             end)
 
@@ -199,6 +178,36 @@ defmodule AOC2024.Day15.Part2.Solution do
       nil ->
         move_boxes(map, tiles, dx, dy)
     end
+  end
+
+  defp get_boxes_with_id(map, id) do
+    Enum.filter(map, fn {_pos, tile} -> tile.id == id end) |> Enum.map(&elem(&1, 1))
+  end
+
+  defp check_boxes_recursively(map, boxes, dx, dy, acc_boxes) do
+    Enum.reduce_while(boxes, {true, acc_boxes}, fn tile, {_can_move, acc} ->
+      next_pos = {tile.x + dx, tile.y + dy}
+
+      case Map.get(map, next_pos) do
+        %Tile{type: :obstacle} ->
+          {:halt, {false, acc}}
+
+        %Tile{type: :box, id: new_box_id} ->
+          if new_box_id not in Enum.map(acc ++ boxes, & &1.id) do
+            new_boxes = get_boxes_with_id(map, new_box_id)
+
+            {can_move, updated_acc} =
+              check_boxes_recursively(map, new_boxes, dx, dy, acc ++ [tile])
+
+            if can_move, do: {:cont, {true, updated_acc}}, else: {:halt, {false, updated_acc}}
+          else
+            {:cont, {true, acc ++ [tile]}}
+          end
+
+        _ ->
+          {:cont, {true, acc ++ [tile]}}
+      end
+    end)
   end
 
   def move_boxes(map, tiles, dx, dy) do
