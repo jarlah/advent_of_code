@@ -44,24 +44,20 @@ defmodule AOC2024.Day15.Part1.Solution do
 
   """
   def solution(input) do
-    map =
-      input
-      |> Tile.parse_map()
-      |> Enum.map(fn {pos, tile} ->
-        case tile.display do
-          "@" -> {pos, %Tile{tile | type: :robot}}
-          "#" -> {pos, %Tile{tile | type: :obstacle}}
-          "O" -> {pos, %Tile{tile | type: :box}}
-          "." -> {pos, %Tile{tile | type: :space}}
-        end
-      end)
-      |> Enum.into(%{})
-      |> tap(&Map.values(&1) |> Tile.print_tile_map())
-
     input
-    |> get_moves()
-    |> then(&perform_moves(map, &1))
-    |> tap(&Map.values(&1) |> Tile.print_tile_map())
+    |> Tile.parse_map()
+    |> Enum.map(fn {pos, tile} ->
+      case tile.display do
+        "@" -> {pos, %Tile{tile | type: :robot}}
+        "#" -> {pos, %Tile{tile | type: :obstacle}}
+        "O" -> {pos, %Tile{tile | type: :box}}
+        "." -> {pos, %Tile{tile | type: :space}}
+      end
+    end)
+    |> Enum.into(%{})
+    |> tap(&(Map.values(&1) |> Tile.print_tile_map()))
+    |> perform_moves(get_moves(input))
+    |> tap(&(Map.values(&1) |> Tile.print_tile_map()))
     |> calculate_box_coordinates()
     |> Enum.map(&elem(&1, 0))
     |> Enum.sum()
