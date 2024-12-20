@@ -65,26 +65,51 @@ defmodule AOC2024.Day15.Part2.Solution do
 
   """
   def solution(input) do
-    grid_map =
-      input
-      |> prepare_input()
-      |> get_map_p2()
-
-    moves =
-      input
-      |> get_moves()
-
-    robot = Enum.find(grid_map, &(elem(&1, 1).type === :robot)) |> elem(1)
-
-    grid_map
-    |> Map.values()
-    |> Tile.print_tile_map(layout: :simple)
-
-    grid_map
-    |> perform_moves(moves, robot)
+    input
+    |> prepare_input()
+    |> Tile.parse_map()
+    |> Enum.map(fn {pos, tile} ->
+      case tile.display do
+        "@" -> {pos, %Tile{tile | type: :robot}}
+        "#" -> {pos, %Tile{tile | type: :obstacle}}
+        "O" -> {pos, %Tile{tile | type: :box}}
+        "." -> {pos, %Tile{tile | type: :space}}
+      end
+    end)
+    |> Enum.into(%{})
+    |> assign_box_ids()
+    |> tap(&(Map.values(&1) |> Tile.print_tile_map()))
+    |> perform_moves(get_moves(input))
+    |> tap(&(Map.values(&1) |> Tile.print_tile_map()))
     |> calculate_box_coordinates()
     |> Enum.map(&elem(&1, 0))
     |> Enum.sum()
+  end
+
+  defp assign_box_ids(grid_map) do
+    grid_map
+    |> Map.keys()
+    # Sort by y first, then x
+    |> Enum.sort_by(fn {x, y} -> {y, x} end)
+    |> Enum.reduce(grid_map, fn {x, y}, acc_map ->
+      tile = Map.get(acc_map, {x, y})
+
+      if tile.type == :box and tile.id == nil do
+        right_tile = Map.get(acc_map, {x + 1, y})
+
+        if right_tile != nil and right_tile.type == :box and right_tile.id == nil do
+          id = UUID.uuid4()
+
+          acc_map
+          |> Map.put({x, y}, %Tile{tile | id: id, display: "["})
+          |> Map.put({x + 1, y}, %Tile{right_tile | id: id, display: "]"})
+        else
+          acc_map
+        end
+      else
+        acc_map
+      end
+    end)
   end
 
   def calculate_box_coordinates(map) do
@@ -98,13 +123,12 @@ defmodule AOC2024.Day15.Part2.Solution do
     end)
   end
 
-  def perform_moves(map, [], _robot) do
-    map
-    |> Map.values()
-    |> Tile.print_tile_map(layout: :simple)
-
-    map
+  def perform_moves(map, moves) do
+    robot = Enum.find(map, &(elem(&1, 1).type === :robot)) |> elem(1)
+    perform_moves(map, moves, robot)
   end
+
+  def perform_moves(map, [], _robot), do: map
 
   def perform_moves(map, [move | rest_moves], %Tile{x: robot_x, y: robot_y} = robot) do
     {dx, dy} =
@@ -271,65 +295,5 @@ defmodule AOC2024.Day15.Part2.Solution do
       |> String.replace(".", "..")
       |> String.replace("@", "@.")
     end)
-  end
-
-  def get_map_p2(input) do
-    input
-    |> Enum.take_while(&String.starts_with?(&1, "#"))
-    |> Enum.reduce({0, []}, fn line, {y, acc} ->
-      columns =
-        line
-        |> String.graphemes()
-        |> Enum.chunk_by(& &1)
-        |> Enum.reduce({0, []}, fn tiles, {x, col_acc} ->
-          tiles =
-            case tiles do
-              ["@"] ->
-                [%Tile{id: nil, x: x, y: y, type: :robot, display: "@"}]
-
-              ["#" | _tail] = obstacles ->
-                obstacles
-                |> Enum.with_index()
-                |> Enum.map(fn {_, offset} ->
-                  %Tile{id: nil, x: x + offset, y: y, type: :obstacle, display: "#"}
-                end)
-
-              ["O" | _tail] = boxes ->
-                boxes
-                |> Enum.with_index()
-                |> Enum.chunk_every(2)
-                |> Enum.map(fn chunk ->
-                  id = UUID.uuid4()
-
-                  chunk
-                  |> Enum.map(fn {_, offset} ->
-                    %Tile{
-                      id: id,
-                      x: x + offset,
-                      y: y,
-                      type: :box,
-                      display: if(rem(offset, 2) == 0, do: "[", else: "]")
-                    }
-                  end)
-                end)
-                |> List.flatten()
-
-              ["." | _tail] = spaces ->
-                spaces
-                |> Enum.with_index()
-                |> Enum.map(fn {_, offset} ->
-                  %Tile{id: nil, x: x + offset, y: y, type: :space, display: "."}
-                end)
-            end
-
-          {x + length(tiles), tiles ++ col_acc}
-        end)
-
-      {y + 1, elem(columns, 1) ++ acc}
-    end)
-    |> elem(1)
-    |> Enum.reverse()
-    |> Enum.map(fn tile -> {{tile.x, tile.y}, tile} end)
-    |> Enum.into(%{})
   end
 end
