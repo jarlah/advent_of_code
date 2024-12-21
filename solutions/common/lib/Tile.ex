@@ -7,7 +7,8 @@ defmodule Tile do
           width: integer(),
           height: integer(),
           type: type(),
-          display: String.t()
+          display: String.t(),
+          visited: boolean()
         }
 
   defstruct id: nil,
@@ -16,7 +17,8 @@ defmodule Tile do
             width: 1,
             height: 1,
             type: nil,
-            display: nil
+            display: nil,
+            visited: false
 
   def move(%__MODULE__{x: x, y: y} = tile, dx, dy) do
     %__MODULE__{tile | x: x + dx, y: y + dy}
@@ -39,6 +41,7 @@ defmodule Tile do
       for y <- 0..(rows - 1), into: [] do
         for x <- 0..(cols - 1), into: [] do
           case Enum.find(map, fn tile -> tile.x == x and tile.y == y end) do
+            %Tile{display: display, visited: true} -> "X"
             %Tile{display: display} -> display
             _ -> default_tile
           end
