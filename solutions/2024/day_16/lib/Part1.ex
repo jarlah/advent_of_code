@@ -24,8 +24,7 @@ defmodule AOC2024.Day16.Part1.Solution do
     goal_pos = find_goal_position(map)
 
     case bfs(map, start_pos, goal_pos) do
-      # Subtract 1 to get number of steps (excluding start position)
-      {:ok, path} -> length(path) - 1
+      {:ok, _path, total_cost} -> total_cost
       :error -> :no_path_found
     end
   end
@@ -39,7 +38,8 @@ defmodule AOC2024.Day16.Part1.Solution do
   end
 
   defp bfs(map, start, goal) do
-    queue = :queue.from_list([{start, []}])
+    # {position, path, total_cost, direction}
+    queue = :queue.from_list([{start, [], 0, :forward}])
     visited = MapSet.new([start])
 
     bfs_loop(queue, visited, map, goal)
@@ -47,11 +47,13 @@ defmodule AOC2024.Day16.Part1.Solution do
 
   defp bfs_loop(queue, visited, map, goal) do
     case :queue.out(queue) do
-      {{:value, {current, path}}, rest} ->
+      {{:value, {current, path, total_cost, _direction}}, rest} ->
         if current == goal do
-          {:ok, [current | path]}
+          {:ok, Enum.reverse(path), total_cost}
         else
-          {new_queue, new_visited} = explore_neighbors(current, rest, visited, map)
+          {new_queue, new_visited} =
+            explore_neighbors(current, rest, visited, map, total_cost, path)
+
           bfs_loop(new_queue, new_visited, map, goal)
         end
 
@@ -60,22 +62,24 @@ defmodule AOC2024.Day16.Part1.Solution do
     end
   end
 
-  defp explore_neighbors({x, y}, queue, visited, map) do
-    [{x + 1, y}, {x - 1, y}, {x, y + 1}, {x, y - 1}]
-    |> Enum.reduce({queue, visited}, fn neighbor, {acc_queue, acc_visited} ->
-      if can_move_to?(neighbor, map) and not MapSet.member?(acc_visited, neighbor) do
-        current_path =
-          case :queue.peek(acc_queue) do
-            {:value, {_, path}} -> path
-            :empty -> []
-          end
+  defp explore_neighbors({x, y}, queue, visited, map, total_cost, path) do
+    prev_direction = get_previous_direction(path)
+
+    [{x + 1, y, :right}, {x - 1, y, :left}, {x, y + 1, :forward}]
+    |> Enum.reduce({queue, visited}, fn {new_x, new_y, new_direction}, {q, v} ->
+      neighbor = {new_x, new_y}
+
+      if can_move_to?(neighbor, map) and not MapSet.member?(v, neighbor) and
+           not opposite?(prev_direction, new_direction) do
+        move_cost = calculate_move_cost(new_direction)
+        new_total_cost = total_cost + move_cost
 
         {
-          :queue.in({neighbor, [{x, y} | current_path]}, acc_queue),
-          MapSet.put(acc_visited, neighbor)
+          :queue.in({neighbor, [{x, y} | path], new_total_cost, new_direction}, q),
+          MapSet.put(v, neighbor)
         }
       else
-        {acc_queue, acc_visited}
+        {q, v}
       end
     end)
   end
@@ -86,4 +90,23 @@ defmodule AOC2024.Day16.Part1.Solution do
       _ -> false
     end
   end
+
+  defp get_previous_direction([]), do: :forward
+  defp get_previous_direction([{_x, _y}]), do: :forward
+  defp get_previous_direction([{x, y}, {prev_x, prev_y} | _]) do
+    cond do
+      y > prev_y -> :forward
+      x > prev_x -> :right
+      x < prev_x -> :left
+      true -> raise "Fallback, shouldn't happen"
+    end
+  end
+
+  defp opposite?(:forward, _), do: false
+  defp opposite?(:left, :right), do: true
+  defp opposite?(:right, :left), do: true
+  defp opposite?(_, _), do: false
+
+  defp calculate_move_cost(:forward), do: 1
+  defp calculate_move_cost(_), do: 1000
 end
