@@ -2,7 +2,7 @@ defmodule AOC2015.Day2.Part2.Solution do
   @doc ~S"""
   ## Examples
 
-      iex> AOC2015.Day2.Part2.Solution.solution(AOC2015.Day2.Input.input())
+      iex> AOC2015.Day2.Part2.Solution.solution(Input.read_file_to_lines!("input.txt"))
       0
 
   """
